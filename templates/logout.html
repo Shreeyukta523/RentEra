@@ -1,0 +1,41 @@
+{% extends 'base.html' %}
+
+{% load static %}
+{% block content%}
+<div class="profile">
+    {% include 'alert.html' %}
+    <div class="m">
+        <div class="prof">
+            <h4>Your Profile</h4>
+            <div class="user">
+                <table>
+                    <tr>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                    <tr>
+                        <td>Username:</td>
+                        <td>{{ request.user.username }}</td>
+                    </tr>
+                    <tr>
+                        <td>Name:</td>
+                        <td>{{ request.user.first_name }} {{ request.user.last_name}}</td>
+                    </tr>
+                    <tr>
+                        <td>Email:</td>
+                        <td>{{ request.user.email }}</td>
+                    </tr>
+                </table> 
+            </div>
+            <form method="POST" action="{% url 'logout_confirm' %}">
+                {% csrf_token %}
+                <button type="submit" class="btn">Logout</button>
+            </form>
+        </div>
+
+        <div class="activities">
+            <h4>Your Activites</h4>
+        </div>
+    </div>
+</div>
+{% endblock %}

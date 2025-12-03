@@ -1,0 +1,350 @@
+.frame {
+  display: flex;
+  width: 517.47px;
+  height: 600px;
+  align-items: center;
+  gap: 10px;
+  padding: 26px 42px;
+  position: relative;
+}
+
+.frame .group {
+  position: absolute;
+  width: 519px;
+  height: 600px;
+  top: 0;
+  left: 0;
+}
+
+.frame .overlap {
+  position: relative;
+  width: 517px;
+  height: 600px;
+  background-color: #d9d9d9;
+}
+
+.frame .div {
+  position: absolute;
+  width: 434px;
+  height: 518px;
+  top: 26px;
+  left: 42px;
+}
+
+.frame .overlap-group {
+  position: absolute;
+  width: 295px;
+  height: 196px;
+  top: 0;
+  left: 54px;
+}
+
+.frame .h {
+  position: absolute;
+  width: 165px;
+  top: 0;
+  left: 61px;
+  font-family: "Poppins-Bold", Helvetica;
+  font-weight: 700;
+  color: #f4511e;
+  font-size: 32px;
+  text-align: center;
+  letter-spacing: 0.10px;
+  line-height: 32px;
+}
+
+.frame .group-2 {
+  position: absolute;
+  width: 295px;
+  height: 155px;
+  top: 41px;
+  left: 0;
+}
+
+.frame .input-form-control {
+  position: absolute;
+  width: 267px;
+  height: 43px;
+  top: 29px;
+  left: 20px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid;
+  border-color: #e6e6e6;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: var(--second-text-color);
+  font-size: 14px;
+  letter-spacing: 0.20px;
+  line-height: 28px;
+  white-space: nowrap;
+  padding: 0;
+  padding-left: 21px;
+}
+
+.frame .form-control {
+  position: absolute;
+  width: 189px;
+  top: 0;
+  left: 25px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 16px;
+  letter-spacing: 0.20px;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.frame .form-control-input {
+  position: absolute;
+  width: 291px;
+  height: 43px;
+  top: 112px;
+  left: 0;
+  overflow: hidden;
+}
+
+.frame .email {
+  position: relative;
+  height: 43px;
+  left: 17px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid;
+  border-color: #e6e6e6;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: var(--second-text-color);
+  font-size: 14px;
+  letter-spacing: 0.20px;
+  line-height: 28px;
+  white-space: nowrap;
+  padding: 0;
+  padding-left: 21px;
+}
+
+.frame .text-wrapper {
+  top: 82px;
+  left: 23px;
+  position: absolute;
+  width: 126px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 16px;
+  letter-spacing: 0.20px;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.frame .overlap-group-wrapper {
+  position: absolute;
+  width: 144px;
+  height: 37px;
+  top: 481px;
+  left: 135px;
+}
+
+.frame .div-wrapper {
+  position: relative;
+  width: 142px;
+  height: 37px;
+  background-image: url(./img/rectangle-98.svg);
+  background-size: 100% 100%;
+}
+
+.frame .text-wrapper-2 {
+  position: absolute;
+  width: 73px;
+  top: 8px;
+  left: 35px;
+  font-family: "Inter-Medium", Helvetica;
+  font-weight: 500;
+  color: #ffffff;
+  font-size: 20px;
+  letter-spacing: 0.18px;
+  line-height: 25.4px;
+  white-space: nowrap;
+}
+
+.frame .group-3 {
+  position: absolute;
+  width: 295px;
+  height: 155px;
+  top: 206px;
+  left: 52px;
+}
+
+.frame .email-wrapper {
+  position: relative;
+  height: 43px;
+  left: 17px;
+  background-color: #f8f8f8;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid;
+  border-color: #e6e6e6;
+}
+
+.frame .email-2 {
+  position: absolute;
+  top: 7px;
+  left: 21px;
+  font-family: "Inter-Regular", Helvetica;
+  font-weight: 400;
+  color: var(--second-text-color);
+  font-size: 14px;
+  letter-spacing: 0.20px;
+  line-height: 28px;
+  white-space: nowrap;
+}
+
+.frame .group-4 {
+  position: absolute;
+  width: 203px;
+  height: 80px;
+  top: 372px;
+  left: 0;
+}
+
+.frame .overlap-2 {
+  position: absolute;
+  width: 199px;
+  height: 47px;
+  top: 33px;
+  left: 0;
+}
+
+.frame .drag-yourcitizenship {
+  position: absolute;
+  width: 186px;
+  top: 13px;
+  left: 0;
+  font-family: "Poppins-Medium", Helvetica;
+  font-weight: 500;
+  color: transparent;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.frame .span {
+  color: #000000;
+}
+
+.frame .text-wrapper-3 {
+  color: #df6844;
+}
+
+.frame .rectangle {
+  position: absolute;
+  width: 198px;
+  height: 47px;
+  top: 0;
+  left: 1px;
+}
+
+.frame .form-control-2 {
+  top: 0;
+  left: 1px;
+  position: absolute;
+  width: 126px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 16px;
+  letter-spacing: 0.20px;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.frame .group-5 {
+  position: absolute;
+  width: 208px;
+  height: 76px;
+  top: 377px;
+  left: 228px;
+}
+
+.frame .overlap-3 {
+  position: absolute;
+  width: 204px;
+  height: 47px;
+  top: 28px;
+  left: 0;
+}
+
+.frame .rectangle-2 {
+  position: absolute;
+  width: 198px;
+  height: 47px;
+  top: 0;
+  left: 6px;
+  background-color: #f4511e03;
+  border-radius: 10px;
+  border: 1px dashed;
+  border-color: #f4511e;
+}
+
+.frame .drag-your-profile {
+  position: absolute;
+  width: 182px;
+  top: 17px;
+  left: 0;
+  font-family: "Poppins-Medium", Helvetica;
+  font-weight: 500;
+  color: transparent;
+  font-size: 10px;
+  text-align: center;
+  letter-spacing: 0;
+  line-height: normal;
+}
+
+.frame .form-control-3 {
+  top: 0;
+  left: 19px;
+  position: absolute;
+  width: 126px;
+  font-family: "Poppins-SemiBold", Helvetica;
+  font-weight: 600;
+  color: var(--text-color);
+  font-size: 16px;
+  letter-spacing: 0.20px;
+  line-height: 24px;
+  white-space: nowrap;
+}
+
+.frame .text-wrapper-4 {
+  position: absolute;
+  width: 67px;
+  top: 479px;
+  left: 319px;
+  font-family: "Poppins-Regular", Helvetica;
+  font-weight: 400;
+  color: #f4511e;
+  font-size: 12px;
+  letter-spacing: 0.20px;
+  line-height: 32px;
+  text-decoration: underline;
+  white-space: nowrap;
+}
+
+.frame .vector-wrapper {
+  position: relative;
+  width: 34px;
+  height: 34px;
+  background-color: #f4511e;
+  border-radius: 17px;
+}
+
+.frame .vector {
+  position: absolute;
+  width: 9px;
+  height: 15px;
+  top: 9px;
+  left: 11px;
+}

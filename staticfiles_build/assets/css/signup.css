@@ -1,0 +1,181 @@
+/* General Body and Page Background */
+body {
+    font-family: 'Inter', 'Roboto', sans-serif;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    margin: 0;
+    background: linear-gradient(135deg, #f0f4f8 0%, #e0e9f0 100%);
+    overflow-x: hidden;
+    padding: 2rem 0; /* Add top and bottom padding for smaller screens */
+}
+
+/* Main Content Wrapper */
+.main-content {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+/* Card Container */
+.card-registration {
+    border-radius: 1.25rem;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08),
+                0 4px 12px rgba(0, 0, 0, 0.05);
+    background-color: #ffffff;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fadeInSlideUp 0.8s forwards ease-out;
+}
+
+/* Card Entry Animation */
+@keyframes fadeInSlideUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* Card Body Padding */
+.card-body {
+    padding: 3.5rem 4rem !important;
+}
+
+/* Heading Styling */
+h3.text-uppercase {
+    color: #2c3e50;
+    font-weight: 700;
+    margin-bottom: 2.8rem !important;
+    text-align: center;
+    letter-spacing: 0.05em;
+}
+
+/* Form Outline Inputs (MDB specific) */
+.form-outline .form-control {
+    border-radius: 0.75rem;
+    padding: 0.9rem 1.2rem;
+    border: 1px solid #ced4da;
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 0 !important; /* Remove default mb-4 on input, apply to parent div */
+}
+
+.form-outline .form-control:focus {
+    border-color: #557bcd; /* A pleasing blue on focus */
+    box-shadow: 0 0 0 0.25rem rgba(85, 123, 205, 0.25);
+}
+
+.form-outline .form-label {
+    top: 0.9rem;
+    left: 1.2rem;
+    font-size: 1.05rem;
+    color: #6c757d;
+    transition: all 0.3s ease-in-out;
+}
+
+.form-outline .form-control:focus ~ .form-label,
+.form-outline .form-control:not(:placeholder-shown) ~ .form-label {
+    transform: translateY(-1.7rem) scale(0.85);
+    background-color: #ffffff;
+    padding: 0 0.4rem;
+    left: 1rem;
+    color: #495057;
+}
+
+/* Role Radio Buttons */
+.d-md-flex h6 {
+    color: #495057;
+    font-weight: 600;
+}
+
+.form-check-label {
+    color: #555;
+    font-weight: 500;
+    cursor: pointer;
+}
+
+/* Error Messages */
+.text-danger {
+    font-size: 0.85rem;
+    color: #dc3545;
+    margin-top: 0.3rem;
+    display: block;
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+/* Buttons */
+.btn-warning {
+    background-color: #557bcd !important;
+    border-color: #557bcd !important;
+    color: #ffffff !important;
+    font-weight: 600;
+    padding: 0.9rem 2.5rem;
+    border-radius: 0.6rem;
+    letter-spacing: 0.03em;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 4px 10px rgba(85, 123, 205, 0.2);
+}
+
+.btn-warning:hover {
+    background-color: #4364ad !important;
+    border-color: #4364ad !important;
+    transform: translateY(-2px);
+    box-shadow: 0 6px 15px rgba(85, 123, 205, 0.3);
+}
+
+.btn-light {
+    background-color: #e9ecef !important;
+    border-color: #e9ecef !important;
+    color: #495057 !important;
+    font-weight: 600;
+    padding: 0.9rem 2.5rem;
+    border-radius: 0.6rem;
+    letter-spacing: 0.03em;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+}
+
+.btn-light:hover {
+    background-color: #dee2e6 !important;
+    border-color: #dee2e6 !important;
+    transform: translateY(-2px);
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Login Link */
+.link p {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1rem;
+    color: #6c757d;
+}
+
+.link a {
+    color: #557bcd;
+    text-decoration: none;
+    font-weight: 600;
+    transition: color 0.2s ease-in-out;
+}
+
+.link a:hover {
+    color: #4364ad;
+    text-decoration: underline;
+}
+
+/* MDB Fixes for Select (if used) */
+.card-registration .select-input.form-control[readonly]:not([disabled]) {
+    font-size: 1.05rem;
+    line-height: 2.15;
+    padding-left: 1.2em;
+    padding-right: 1.2em;
+    border-radius: 0.75rem;
+}

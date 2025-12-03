@@ -1,0 +1,582 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+
+<style>
+     body, html {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Base styles */
+    .filter-form {
+        background-color: #f8f9fa; /* Lighter background for sidebar */
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e0e0e0;
+        margin-bottom: 30px; /* Space at the bottom */
+    }
+    .property-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    .card {
+        background-color: #fff; /* White background to match the image */
+        border: 1px solid #e0e0e0; /* Subtle border */
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        overflow: hidden;
+        display: flex; /* Make card content a flex container */
+        flex-direction: column;
+        height: 100%; /* Ensure all cards are the same height */
+    }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Lift card on hover */
+    }
+
+    /* Enhanced Input and Select Fields */
+    .form-control {
+        border-radius: 8px;
+        padding: 10px 15px;
+        border: 1px solid #cccccc;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-control:focus {
+        border-color: #f35525; /* Use the new orange theme color */
+        box-shadow: 0 0 0 0.2rem rgba(243, 85, 37, 0.25);
+    }
+    label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Button Styling with new orange theme */
+    .btn-primary {
+        background-color: #f35525;
+        border-color: #f35525;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #fff;
+        transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .btn-primary:hover {
+        background-color: #d14a1e; /* Darker orange on hover */
+        border-color: #d14a1e;
+        transform: translateY(-1px);
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+        transform: translateY(-1px);
+    }
+
+    /* Dropdown Checkbox (Facilities) - Enhanced */
+    .dropdown-check-list {
+        position: relative;
+        width: 100%;
+    }
+    .dropdown-check-list .anchor {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        border: 1px solid #cccccc;
+        border-radius: 8px;
+        background-color: #ffffff; /* Lighter background than sidebar */
+        color: #495057;
+        cursor: pointer;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    .dropdown-check-list .anchor:hover {
+        background-color: #e9ecef;
+        border-color: #a3a3a3;
+    }
+    .dropdown-check-list .anchor:after {
+        content: "▼";
+        font-size: 0.8em;
+        margin-left: 10px;
+        transform: none;
+        position: static;
+    }
+    .dropdown-check-list .items {
+        border: 1px solid #cccccc;
+        border-top: none;
+        position: absolute;
+        width: 100%;
+        background-color: #fff;
+        z-index: 1000;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        border-radius: 0 0 8px 8px;
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 10px 15px;
+        box-sizing: border-box;
+        display: none;
+    }
+    .dropdown-check-list .items div {
+        margin-bottom: 8px;
+    }
+    .form-check-label {
+        cursor: pointer;
+        color: #333;
+    }
+    .form-check-input:checked + .form-check-label {
+        font-weight: 500;
+        color: #f35525; /* Use the new orange theme color */
+    }
+
+    /* Make the paginator appear static in the document flow */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+        margin-top: 30px;
+        border-top: 1px solid #eee;
+    }
+    .pagination a, .pagination span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        margin: 0 5px;
+        border: 1px solid #dee2e6;
+        border-radius: 50%;
+        text-decoration: none;
+        color: #f35525; /* Use the new orange theme color */
+        background-color: #fff;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    .pagination a:hover {
+        background-color: #e9ecef;
+        border-color: #f35525;
+        color: #d14a1e;
+        box-shadow: 0 2px 8px rgba(243, 85, 37, 0.2);
+    }
+    .pagination .current {
+        background-color: #f35525;
+        color: #fff;
+        border: 1px solid #f35525;
+        box-shadow: 0 4px 10px rgba(243, 85, 37, 0.3);
+        font-weight: 700;
+    }
+    .pagination .current:hover {
+        background-color: #f35525;
+        color: #fff;
+        border: 1px solid #f35525;
+    }
+
+    /* Make the filter section sticky on scroll */
+    .sidebar-sticky {
+        position: sticky;
+        top: 20px;
+    }
+
+    .item p, .item ul {
+        margin-bottom: 0.2rem !important;
+    }
+
+    .mainprop{
+        display:block;
+    }
+
+    .properties-box {
+        flex-wrap: wrap !important;
+    }
+
+    .section{
+        margin-top: 0px;
+    }
+
+    .fav-overlay {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 10;
+    }
+    .fav-overlay a {
+        font-size: 14px;
+        color: white;
+        /* Link text color */
+        margin-top: 20px;
+        text-decoration: none;
+    }
+
+    /* using color for wishlist */
+    .updatefav i {
+        cursor: pointer;
+        transition: color 0.3s ease;
+    }
+
+    .updatefav.fa-heart {
+        color: #d14a1e; 
+    }
+
+    .updatefavt i.fa-heart-o {
+        color: white; 
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar for filters and search -->
+        <div class="col-md-3 ">
+            <form method="get" class="filter-form">
+                <div class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search..."
+                               value="{{ selected_filters.search|default:'' }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+
+                <h5 class="mb-3">Filter Properties</h5>
+
+                <div class="mb-3">
+                    <label for="province-select">Province</label>
+                    <select name="province" id="province-select" class="form-control">
+                        <option value="">All Provinces</option>
+                        {% for code, name in PROVINCES %}
+                            <option value="{{ code }}" {% if selected_filters.province == code %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="district-input">District</label>
+                    <input type="text" name="district" id="district-input" placeholder="e.g. Kathmandu" class="form-control"
+                           value="{{ selected_filters.district|default:'' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="property-type-select">Type</label>
+                    <select name="property_type" id="property-type-select" class="form-control">
+                        <option value="">All Types</option>
+                        {% for pt in property_types %}
+                            <option value="{{ pt }}" {% if selected_filters.property_type == pt %}selected{% endif %}>{{ pt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="max-price-input">Max Price</label>
+                    <input type="number" name="max_price" id="max-price-input" placeholder="e.g. 1,000,000" class="form-control"
+                           value="{{ selected_filters.max_price|default:'' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="facilities-dropdown">Facilities</label>
+                    <div id="facilities-dropdown" class="dropdown-check-list" tabindex="100">
+                        <span class="anchor">Select Facilities</span>
+                        <div class="items">
+                            {% for facility in facilities %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="facilities"
+                                           id="facility_{{ facility.id }}"
+                                           value="{{ facility.id }}"
+                                           {% if facility.id|stringformat:"s" in selected_filters.facilities %}checked{% endif %}>
+                                    <label class="form-check-label" for="facility_{{ facility.id }}">
+                                        {{ facility.name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{% url 'property' %}" class="btn btn-secondary">Clear Filters</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Main content area -->
+        <div class="col-md-9">
+            <div class="mainprop">
+                <div class="section properties">
+                    {% if recommended_props and properties.number == 1 %}
+                    <h4 style="color: #ff5920; padding: 10px; padding-left: 50px, margin: 10px 10px; margin-left:20px;  font-size: 30px; font-family: sans-serif; font-weight: 700;">Recommendation For You</h4>
+                    <div class="row properties-box">
+                        {% for property in recommended_props %}
+                        <div class="col-lg-4 col-md-6 align-self-center mb-30 properties-items {{property.property_type|slugify}}">
+                            <div class="item">
+                                {% csrf_token %}
+                                <div class="image">
+                                    {% if property.main_image %}
+                                        <a href="{% url 'propertydetails' slug=property.slug %}">
+                                            <img src="{{ property.main_image }}" alt="{{ property.name }}">
+                                        </a>
+                                    {% endif %}
+                                </div>
+
+                                <span class="category">{{ property.property_type }}</span>
+
+                                <h4 class="mb-1" style="font-size: 16px;"><b>
+                                    <a href="{% url 'propertydetails' slug=property.slug %}">
+                                        {{ property.name|slice:":20" }}{% if property.name|length > 20 %}...{% endif %}
+                                    </a>
+                                </b></h4>
+
+                                <p style="font-size: 16px; color: #f35525" class="property-price-style">
+                                    Price: Rs.{{ property.price }}
+                                </p>
+
+                                <p class="mb-0 text-muted fs-6">
+                                    {{ property.address }}, {{ property.province }}
+                                </p>
+
+                                <ul class="mb-0">
+                                    <li>Number of Rooms: <span>{{ property.number_of_rooms }}</span></li>
+                                </ul>
+
+                                <div class="main-button" style="text-align: center; justify-content:center">
+                                    <a href="{% url 'propertydetails' slug=property.slug %}">View Details</a>
+                                </div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                </div>
+
+                <div class="section properties">
+                    {% if properties %}
+                        <h4 style="color: #ff5920; padding: 10px; padding-left: 50px, margin: 10px 10px; margin-left:20px;  font-size: 30px; font-family: sans-serif; font-weight: 700;">Explore More Here</h4>
+
+                        <div class="row properties-box">
+                            {% for property in properties %}
+                            <div class="col-lg-4 col-md-6 align-self-center mb-30 properties-items {{property.property_type|slugify}}">
+                                <div class="item">
+                                    {% csrf_token %}
+                                    <div class="image">
+                                        {% if property.main_image %}
+                                            <a href="{% url 'propertydetails' slug=property.slug %}">
+                                                <img src="{{ property.main_image }}" alt="{{ property.name }}">
+                                            </a>
+                                            <div class="property_data">
+                                                <input type="hidden" class="prop_id" value="{{ property.id }}">
+
+                                                <div class="fav-overlay">
+                                                    <a href="javascript:void(0);" class="updatefav" style="text-decoration: none;">
+                                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+
+
+                                        {% endif %}
+                                    </div>
+
+                                    <span class="category">{{ property.property_type }}</span>
+
+                                    <h4 class="mb-1" style="font-size: 16px;"><b>
+                                        <a href="{% url 'propertydetails' slug=property.slug %}">
+                                            {{ property.name|slice:":20" }}{% if property.name|length > 20 %}...{% endif %}
+                                        </a>
+                                    </b></h4>
+
+                                    <p style="font-size: 16px; color: #f35525" class="property-price-style">
+                                        Price: Rs.{{ property.price }}
+                                    </p>
+
+                                    <p class="mb-0 text-muted fs-6">
+                                        {{ property.address }}, {{ property.province }}
+                                    </p>
+
+                                    <ul class="mb-0">
+                                        <li>Number of Rooms: <span>{{ property.number_of_rooms }}</span></li>
+                                    </ul>
+
+                                    <div class="main-button" style="text-align: center; justify-content:center">
+                                        <a href="{% url 'propertydetails' slug=property.slug %}">View Details</a>
+                                    </div>
+                                </div>
+                            </div>
+                            {% endfor %}
+
+                        </div>  <!-- FIXED: MISSING CLOSING DIV FOR .row.properties-box -->
+                    {% endif %}
+
+                    {% if properties.paginator.num_pages > 1 %}
+                        <div class="pagination mt-3">
+                            {% if properties.has_previous %}
+                                <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ properties.previous_page_number }}">
+                                    &laquo;
+                                </a>
+                            {% endif %}
+
+                            {% for num in properties.paginator.page_range %}
+                                {% if properties.number|add:"-3" < num and num < properties.number|add:"3" %}
+                                    {% if num == properties.number %}
+                                        <span class="current">{{ num }}</span>
+                                    {% else %}
+                                        <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}">{{ num }}</a>
+                                    {% endif %}
+                                {% elif num == properties.number|add:"-3" or num == properties.number|add:"3" %}
+                                    <span>...</span>
+                                {% endif %}
+                            {% endfor %}
+
+                            {% if properties.has_next %}
+                                <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ properties.next_page_number }}">
+                                    &raquo;
+                                </a>
+                            {% endif %}
+                        </div>
+                    {% else %}
+                        <div class="alert alert-info text-center mt-5 p-4" role="alert">
+                            <h4 class="alert-heading">No properties found!</h4>
+                            <p>We couldn't find any properties matching your search or filters.</p>
+                            <hr>
+                            <p class="mb-0">Try adjusting or clearing your filters.</p>
+                        </div>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var checkList = document.getElementById('facilities-dropdown');
+    var items = checkList.querySelector('.items');
+    var anchor = checkList.querySelector('.anchor');
+
+    anchor.onclick = function (evt) {
+        evt.stopPropagation();
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+        } else {
+            items.style.display = "none";
+        }
+    };
+
+    document.addEventListener('click', function(event) {
+        var isClickInside = checkList.contains(event.target);
+        if (!isClickInside && items.style.display === "block") {
+            items.style.display = "none";
+        }
+    });
+
+    $('.addToFavbtn').click(function (e) { 
+        e.preventDefault();
+        
+        var property_id = $(this).closest('.property_data').find('.prop_id').val(); 
+        var token = $('input[name=csrfmiddlewaretoken]').val(); // CSRF token
+
+        $.ajax({
+            type: "POST",
+            url: "/addtofav/",  
+            data: {
+                'property_id': property_id,
+                csrfmiddlewaretoken: token
+            },
+            success: function (response) {
+                console.log(response);
+                
+            },
+        });
+    });
+
+    
+    $('.updatefav').click(function (e) {
+        e.preventDefault();
+    
+        var property_id = $(this).closest('.property_data').find('.prop_id').val(); 
+        var token = $('input[name=csrfmiddlewaretoken]').val(); 
+        var icon = $(this).find('i'); 
+    
+        $.ajax({
+            type: "POST",
+            url: "/updatefav/",  
+            data: {
+                'property_id': property_id,
+                csrfmiddlewaretoken: token
+            },
+            success: function (response) {
+                console.log(response);
+
+                if (response.status === 'added') {
+                    icon.removeClass('fa-heart-o').addClass('fa-heart'); 
+                    icon.css('color', 'red'); 
+                    //showNotification('success', 'Added to wishlist');
+                }
+                //item removed on reclicking
+                else if (response.status === 'removed') {
+                    icon.removeClass('fa-heart').addClass('fa-heart-o'); 
+                    icon.css('color', ''); 
+                    //showNotification('success', 'Removed from wishlist');
+                }
+            },
+        });
+    });
+    
+        // Check wishlist status when the page loads to apply red color to the heart icon for items already in the wishlist
+    $('.property_data').each(function () {
+        var property_id = $(this).find('.prop_id').val();
+        var icon = $(this).find('.updatefav i'); // Get the heart icon for this product
+
+        $.ajax({
+            type: "GET",
+            url: "/checkwishlist/",  
+            data: {
+                'property_id': property_id,
+            },
+            success: function (response) {
+                if (response.in_fav) {
+                    icon.removeClass('fa-heart-o').addClass('fa-heart'); // Change to filled heart
+                    icon.css('color', 'red'); // Set the heart to red
+                }
+            }
+        });
+    });
+
+    // for deleting item from wishlist
+    $('.delete-fav-item').click(function (e) { 
+        e.preventDefault();
+
+        var property_id = $(this).closest('.property_data').find('.prop_id').val(); 
+        var token = $('input[name=csrfmiddlewaretoken]').val(); // CSRF token
+
+        $.ajax({
+            type: "POST",
+            url: "/deletefav/",
+            data: {
+                'property_id': property_id,
+                 csrfmiddlewaretoken: token
+            },
+            success: function (response) {
+                console.log(response);
+                sessionStorage.setItem('notificationType', 'success');
+                sessionStorage.setItem('notificationMessage', 'Removed from wishlist');
+                location.reload();
+                // $('.wishlist_data').load(location.href + " .wishlist_data");
+                // showNotification('success','Removed from wishlist');
+            }
+        });
+});
+
+</script>
+{% endblock %}

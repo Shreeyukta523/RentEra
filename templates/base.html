@@ -1,0 +1,34 @@
+{% include "header.html" %}
+{% load static %}
+<link
+  rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+/>
+<link rel="stylesheet" href="{% static 'assets/css/addproperty.css' %}">
+
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+  {% comment %} integrity="sha256-oF8bRS4b1X8VhF/DoDNRN+zTzF2Mta7HbzJ3d2Z8Jsw="
+  crossorigin="" {% endcomment %}
+/>
+<link
+  rel="stylesheet"
+  href="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.css"
+/>
+<link rel="stylesheet" href="{% static 'assets/css/homepage.css' %}">
+
+{% block content %}
+
+{% endblock %}
+
+<script
+  src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+  {% comment %} integrity="sha256-oGqgs+ghnHOrs3B7YXNf4F5XxgSOfXYp1iv9o3QnvZg="
+  crossorigin="" {% endcomment %}>
+</script>
+
+<script src="https://unpkg.com/leaflet-control-geocoder/dist/Control.Geocoder.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/mixitup/3.3.1/mixitup.min.js"></script>
+
+{% include "footer.html" %}

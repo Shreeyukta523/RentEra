@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Property Expiry Reminder</title>
+</head>
+<body style="font-family: Arial, sans-serif; background-color: #f8f8f8; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background: white; padding: 20px; border-radius: 8px;">
+        <h2 style="color: #333;">Hello {{ user.first_name }},</h2>
+        <p>
+            This is a friendly reminder that your property <strong>{{ property_name }}</strong> 
+            will expire on <strong>{{ expiry_date }}</strong>.
+        </p>
+        <p>
+            To keep it active, you can restore or renew it from your dashboard.
+        </p>
+        <p style="margin-top: 20px;">
+            <a href="{% url 'proprietordashboard' %}" style="background-color: #f35525; color: white; padding: 10px 20px; border-radius: 5px; text-decoration: none;">Go to Dashboard</a>
+        </p>
+        <p style="margin-top: 20px; color: #555;">Thank you,<br>Rentera Team</p>
+    </div>
+</body>
+</html>

@@ -1,0 +1,205 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            background-color: #f7f9fc;
+        }
+
+        .main-content {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .form-control {
+            background-color: #ffffff !important;
+            box-shadow: 1 1px 2px rgba(0, 0, 0, 1);
+            border-radius: 12px !important;
+        }
+
+
+        .form-card {
+            padding: 2.5rem 4rem;
+            max-width: 600px;
+            border-radius: 2.5rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1), 0 4px 12px rgba(0, 0, 0, 0.08);
+            background-color: #ffffff;
+            width: 100%;
+        }
+
+        .form-card h3 {
+            font-weight: 700;
+            margin-bottom: 3rem;
+            text-align: center;
+            color: #f35525;
+            font-size: 2.2rem;
+            letter-spacing: 1px;
+        }
+
+        .form-field-wrapper {
+            margin-bottom: 0.8rem;
+        }
+
+        .form-label {
+            font-weight: 500;
+            margin-bottom: 0.3rem;
+        }
+
+        .form-outline .form-label {
+            top: 10% !important;
+        }
+
+        .form-outline .form-control:focus~.form-label {
+            /* UPDATED: This will move the label higher when focused */
+            transform: translateY(-1.5rem) scale(0.85) !important;
+            color: #212529 !important;
+        }
+
+
+        /*
+         * FINAL STYLES: This uses highly specific IDs to guarantee the changes work.
+         */
+        #username-input,
+        #password-input {
+            border-radius: 18px !important;
+            padding: 0.9rem 1rem !important;
+        }
+
+        #username-input:focus,
+        #password-input:focus {
+            border-color: #ccc !important;
+            box-shadow: none !important;
+            outline: 0 !important;
+        }
+
+
+        .btn-warning {
+            background-color: #f35525;
+            border-color: #f35525;
+            padding: 0.75rem;
+            font-size: 1.1rem;
+            font-weight: 500;
+            border-radius: 8px;
+        }
+
+        .btn-warning:hover {
+            background-color: #0a0a0a;
+            border-color: #000000;
+        }
+
+        .error-message {
+            color: #f35525 !important;
+            font-size: 12px;
+            margin-top: 0.25rem;
+            display: block;
+        }
+        
+        /* * STYLES FOR DJANGO MESSAGES (General Alerts) 
+         * Assuming MDB/Bootstrap-like alert classes are available, but adding
+         * a few specifics just in case.
+         */
+        .alert {
+            padding: 15px;
+            margin-bottom: 20px;
+            border: 1px solid transparent;
+            border-radius: 4px;
+        }
+        .alert-success {
+            color: #155724; /* Dark green text */
+            background-color: #d4edda; /* Light green background */
+            border-color: #c3e6cb;
+        }
+        .alert-error, .alert-danger {
+            color: #721c24; /* Dark red text */
+            background-color: #f8d7da; /* Light red background */
+            border-color: #f5c6cb;
+        }
+    </style>
+</head>
+
+<div class="page-container">
+    <div class="main-content">
+        <div class="card form-card">
+            <div class="card-body">
+
+                <h3 class="text-uppercase text-center">Log In</h3>
+                
+                {# START: CORRECT DJANGO MESSAGE DISPLAY BLOCK #}
+                {% if messages %}
+                    <div class="mb-3">
+                    {% for message in messages %}
+                        {# The message.tags generates the correct class (e.g., 'success' -> 'alert-success') #}
+                        <div class="alert alert-{{ message.tags }}" role="alert">
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                    </div>
+                {% endif %}
+                {# END: CORRECT DJANGO MESSAGE DISPLAY BLOCK #}
+                
+                {% if form.non_field_errors %}
+                <div class="mb-3">
+                    {% for error in form.non_field_errors %}
+                    <span class="error-message d-block">{{ error }}</span>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <form method="POST" action="{% url 'login' %}" novalidate>
+                    {% csrf_token %}
+                    <div class="form-field-wrapper">
+                        <div class="form-outline">
+                            <input type="text" name="{{form.username.name}}" id="username-input" class="form-control"
+                                value="{{form.username.value|default_if_none:''}}" required />
+                            <label class="form-label" for="username-input">Username</label>
+                        </div>
+                        <span class="error-message">{{ form.username.errors }}</span>
+                    </div>
+
+                    <div class="form-field-wrapper">
+                        <div class="form-outline">
+                            <input type="password" name="{{form.password.name}}" id="password-input"
+                                class="form-control" value="{{form.password.value|default_if_none:''}}" required />
+                            <label class="form-label" for="password-input">Password</label>
+                        </div>
+                        <div class="text-end" style="font-size: 0.9rem;">
+                            <a href="{% url 'password_reset_otp_request' %}" class="txt2">Forgot password?</a>
+                        </div>
+                        <span class="error-message">{{ form.password.errors }}</span>
+                    </div>
+
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-warning btn-lg">Login</button>
+                    </div>
+
+                    <div class="text-center mt-3">
+                        <p>Don't have an account? <a href="{% url 'signup' %}">Sign up now</a></p>
+                    </div>
+                    
+                </form>
+                
+
+            </div>
+        </div>
+    </div>
+
+
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+
+</div>
+
+{% endblock %}

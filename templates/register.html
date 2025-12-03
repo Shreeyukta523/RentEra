@@ -1,0 +1,242 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <link rel="stylesheet" href="{% static 'assets/css/signup.css' %}" />
+</head>
+
+<body>
+  <section class="h-100 bg-dark">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card card-registration my-4">
+            <div class="row g-0">
+              <div class="col-xl-6 d-none d-xl-block">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img4.webp"
+                  alt="Sample photo" class="img-fluid" style="
+                      border-top-left-radius: 0.25rem;
+                      border-bottom-left-radius: 0.25rem;
+                    " />
+              </div>
+              <div class="col-xl-6">
+                <div class="card-body p-md-5 text-black">
+                  <h3 class="mb-5 text-uppercase">
+                    Sign Up
+                  </h3>
+                  <form method="POST" action="{% url 'signup' %}">
+                    <!--to dynamically create url when the form is submitted-->
+                    {% csrf_token %}
+                    {% include 'alert.html' %}
+                    <!--for error messages-->
+
+                    {{ form.non_field_errors }} <!-- for errors to show near their respective-->
+                    <div class="row">
+                      <div class="col-md-6 mb-4">
+                        <div data-mdb-input-init class="form-outline">
+                          {{ form.first_name }}
+                          <label class="form-label" for="{{ form.first_name.id_for_label }}">First name</label>
+                        </div>
+                      </div>
+                              <!-- can directly use {{ form.first_name }} instead of input type shortens the code but didnt use ehere because form control would be removed making-->
+
+                      <div class="col-md-6 mb-4">
+                        <div data-mdb-input-init class="form-outline">
+                          <input type="text" id="form3Example1n" class="form-control form-control-lg" />
+                          <label class="form-label" for="form3Example1n">Last name</label>
+                        </div>
+                      </div>
+                    </div>
+
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="text" id="form3Example8" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Example8">Username</label>
+                    </div>
+
+                    <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
+                      <h6 class="mb-0 me-4">Gender:</h6>
+
+                      <div class="form-check form-check-inline mb-0 me-4">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="femaleGender"
+                          value="option1" />
+                        <label class="form-check-label" for="femaleGender">Proprietor</label>
+                      </div>
+
+                      <div class="form-check form-check-inline mb-0 me-4">
+                        <input class="form-check-input" type="radio" name="inlineRadioOptions" id="maleGender"
+                          value="option2" />
+                        <label class="form-check-label" for="maleGender">Renter</label>
+                      </div>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="text" id="form3Example97" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Example97">Email ID</label>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="text" id="form3Example90" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Example90">Password</label>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="text" id="form3Example90" class="form-control form-control-lg" />
+                      <label class="form-label" for="form3Example90">Confirm Password </label>
+                    </div>
+
+                    <div class="d-flex justify-content-end pt-3">
+                      <button type="button" data-mdb-button-init data-mdb-ripple-init class="btn btn-light btn-lg">
+                        Reset all
+                      </button>
+                      <button type="button" data-mdb-button-init data-mdb-ripple-init
+                        class="btn btn-warning btn-lg ms-2">
+                        Submit form
+                      </button>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>
+{% endblock %}
+
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<head>
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.css" rel="stylesheet" />
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/mdb-ui-kit/6.4.0/mdb.min.js"></script>
+  <link rel="stylesheet" href="{% static 'assets/css/signup.css' %}" />
+</head>
+
+<body>
+  <section class="h-100 bg-dark">
+    <div class="container py-5 h-100">
+      <div class="row d-flex justify-content-center align-items-center h-100">
+        <div class="col">
+          <div class="card card-registration my-4">
+            <div class="row g-0">
+              <div class="col-xl-6 d-none d-xl-block">
+                <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-registration/img4.webp"
+                  alt="Sample photo" class="img-fluid" style="
+                    border-top-left-radius: 0.25rem;
+                    border-bottom-left-radius: 0.25rem;
+                  " />
+              </div>
+              <div class="col-xl-6">
+                <div class="card-body p-md-5 text-black">
+                  <h3 class="mb-5 text-uppercase">
+                    Sign Up
+                  </h3>
+                  <form method="POST" action="{% url 'signup' %}">
+                    {% csrf_token %}
+                    {% include 'alert.html' %}
+                    {{ form.non_field_errors }}
+
+                    <div class="row">
+                      <div class="col-md-6 mb-4">
+                        <div data-mdb-input-init class="form-outline">
+                          <input type="text" name="{{ form.first_name.html_name }}" id="first_name"
+                            class="form-control form-control-lg" value="{{ form.first_name.value|default_if_none:'' }}"
+                            required />
+                          <label class="form-label" for="first_name">First name</label>
+                          <span class="text-danger">{{ form.first_name.errors }}</span>
+                        </div>
+                      </div>
+
+                      <div class="col-md-6 mb-4">
+                        <div data-mdb-input-init class="form-outline">
+                          <input type="text" name="{{ form.last_name.html_name }}" id="last_name"
+                            class="form-control form-control-lg" value="{{ form.last_name.value|default_if_none:'' }}"
+                            required />
+                          <label class="form-label" for="last_name">Last name</label>
+                          <span class="text-danger">{{ form.last_name.errors }}</span>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="text" name="{{ form.username.html_name }}" id="username"
+                        class="form-control form-control-lg" value="{{ form.username.value|default_if_none:'' }}"
+                        required />
+                      <label class="form-label" for="username">Username</label>
+                      <span class="text-danger">{{ form.username.errors }}</span>
+                    </div>
+
+                    <div class="d-md-flex justify-content-start align-items-center mb-4 py-2">
+                      <h6 class="mb-0 me-4">Role:</h6>
+
+                      <div class="form-check form-check-inline mb-0 me-4">
+                        <input class="form-check-input" type="radio" name="{{ form.role.html_name }}" id="proprietor"
+                          value="proprietor" {% if form.role.value == "proprietor" %} checked {% endif %}>
+                        <label class="form-check-label" for="proprietor">Proprietor</label>
+                      </div>
+
+                      <div class="form-check form-check-inline mb-0 me-4">
+                        <input class="form-check-input" type="radio" name="{{ form.role.html_name }}" id="renter"
+                          value="renter" {% if form.role.value == "renter" %}checked{% endif %}>
+                        <label class="form-check-label" for="renter">Renter</label>
+                      </div>
+                    </div>
+
+                    <span class="text-danger">{{ form.role.errors }}</span>
+
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="email" name="{{ form.email.html_name }}" id="email"
+                        class="form-control form-control-lg" value="{{ form.email.value|default_if_none:'' }}"
+                        required />
+                      <label class="form-label" for="email">Email ID</label>
+                      <span class="text-danger">{{ form.email.errors }}</span>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="password" name="{{ form.password1.html_name }}" id="password1"
+                        class="form-control form-control-lg" required />
+                      <label class="form-label" for="password1">Password</label>
+                      <span class="text-danger">{{ form.password1.errors }}</span>
+                    </div>
+
+                    <div data-mdb-input-init class="form-outline mb-4">
+                      <input type="password" name="{{ form.password2.html_name }}" id="password2"
+                        class="form-control form-control-lg" required />
+                      <label class="form-label" for="password2">Confirm Password</label>
+                      <span class="text-danger">{{ form.password2.errors }}</span>
+                    </div>
+
+                    <div class="d-flex justify-content-end pt-3">
+                      <button type="reset" class="btn btn-light btn-lg">
+                        Reset all
+                      </button>
+                      <button type="submit" class="btn btn-warning btn-lg ms-2">
+                        Submit form
+                      </button>
+                    </div>
+                    <div class="link mt-3">
+                      <p>Already have an account? <a href="{% url 'login' %}">Login</a></p>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+</body>
+
+</html>
+
+{% endblock %}

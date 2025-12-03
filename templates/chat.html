@@ -1,0 +1,255 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block content %}
+
+<style>
+    .chat-container {
+        width: 100%;
+        max-width: 600px;
+        margin: auto;
+        border: 1px solid #ccc;
+        border-radius: 10px;
+        overflow: hidden;
+        display: flex;
+        flex-direction: column;
+        height: 80vh;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        background-color: #fff;
+    }
+
+    .chat-header {
+        padding: 15px;
+        background-color: #4267B2;
+        color: white;
+        font-weight: bold;
+        text-align: center;
+    }
+
+    /* This is the key change to make the messages appear from the bottom */
+    .chat-box {
+        flex-grow: 1;
+        /* Fills the available space */
+        overflow-y: auto;
+        /* Enables scrolling */
+        display: flex;
+        flex-direction: column;
+        /* Stacks messages from top to bottom */
+        padding: 10px;
+    }
+
+    /* Style for the message container */
+    .chat-message-container {
+        display: flex;
+        align-items: flex-end;
+        /* Aligns items to the bottom */
+        margin-bottom: 8px;
+        /* Space between messages */
+    }
+
+    .chat-message-container.sent {
+        justify-content: flex-end;
+        /* Aligns sent messages to the right */
+    }
+
+    .chat-message-container.received {
+        justify-content: flex-start;
+        /* Aligns received messages to the left */
+    }
+
+    .chat-message {
+        max-width: 70%;
+        padding: 10px 15px;
+        border-radius: 15px;
+        word-wrap: break-word;
+        position: relative;
+    }
+
+    .chat-message.sent {
+        background-color: #000000;
+        color:white;
+        align-self: flex-end;
+        /* This is no longer needed with the parent container */
+    }
+
+    .chat-message.received {
+        background-color: #ffffff;
+        border: 1px solid #ddd;
+        align-self: flex-start;
+        /* This is no longer needed with the parent container */
+    }
+
+    .chat-avatar {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        margin-right: 10px;
+    }
+
+    .chat-input-form {
+        padding: 10px;
+        background-color: #fafafa;
+        border-top: 1px solid #ccc;
+        display: flex; /* This is needed to contain the wrapper */
+    }
+
+    .input-wrapper {
+        display: flex;             /* Makes the wrapper a flex container */
+        align-items: center;       /* Vertically centers the items */
+        width: 100%;               /* Ensures the wrapper fills the form's width */
+        gap: 10px;                 /* Adds space between the textarea and button */
+    }
+
+   .input-wrapper textarea {
+        flex-grow: 1;              /* Allows the textarea to grow */
+        flex-basis: 80%;           /* Sets the initial width to 80% */
+        resize: none;
+        height: 40px;
+        padding: 8px 12px;
+        font-size: 1em;
+        border-radius: 8px;
+        border: 1px solid #ccc;
+        line-height: 1.2;
+        max-height: 60px;
+        box-sizing: border-box;
+        margin-left: 10px;
+        border-radius: 50px;
+    }
+
+    .input-wrapper button {
+        flex-grow: 0;              /* Prevents the button from growing */
+        flex-shrink: 0;            /* Prevents the button from shrinking */
+        flex-basis: 20%;           /* Sets the initial width to 20% */
+        padding: 6px 16px;
+        font-size: 0.9em;
+        background-color: #f35525;
+        color: white;
+        border: none;
+        border-radius: 6px;
+        cursor: pointer;
+        height: 40px;
+        box-sizing: border-box;
+    }
+
+    .chat-input-form button:hover {
+        background-color: #f35525;
+    }
+
+    .chat-title {
+        padding: 15px;
+        border-bottom: 1px solid #ddd;
+        text-align: left;
+        margin: 10;
+        background: #000000;
+        color: white
+    }
+
+    .chat-title a {
+        font-weight: bold;
+        color: white;
+    }
+
+    .chat-title a:hover {
+        color: rgb(193, 193, 193)
+    }
+   
+
+</style>
+
+<div class="chat-container">
+    <div class="chat-title">
+        <a href="{% url 'propertydetails' request_obj.property.slug %}" class="small">{{ request_obj.property.name }}</a> -
+        {% if user_role == 'renter' %}
+        {{ request_obj.proprietor.user.username }}
+        {% else %}
+        {{ request_obj.renter.user.username }}
+        {% endif %}
+    </div>
+
+  <div class="chat-box" id="chat-box">
+    {% for message in messages %}
+    <div class="chat-message-container {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+        {% if message.sender != request.user %}
+        {% if message.sender.userprofile.profile_image %}
+        <img src="{{ message.sender.userprofile.profile_image.url }}" class="chat-avatar me-2" alt="Profile">
+        {% else %}
+        <img src="{% static 'assets/images/default.png' %}" class="chat-avatar me-2" alt="Default Profile">
+        {% endif %}
+        {% endif %}
+        <div class="chat-message {% if message.sender == request.user %}sent{% else %}received{% endif %}">
+            {{ message.text }}
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<form id="chat-form" method="POST" class="chat-input-form">
+    {% csrf_token %}
+    <div class="input-wrapper">
+        <textarea name="message" placeholder="Type a message..." required></textarea>
+        <button type="submit">Send</button>
+    </div>
+</form>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const chatBox = document.getElementById("chat-box");
+        const chatForm = document.getElementById("chat-form");
+        const messageInput = chatForm.querySelector('textarea[name="message"]');
+
+        // Scroll to the bottom on page load
+        chatBox.scrollTop = chatBox.scrollHeight;
+
+        chatForm.addEventListener("submit", function (event) {
+            event.preventDefault(); // Stop the form from submitting normally
+
+            const messageText = messageInput.value.trim();
+            if (messageText === "") {
+                return; // Don't send empty messages
+            }
+
+            const formData = new FormData(chatForm);
+
+            fetch(chatForm.action, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': formData.get('csrfmiddlewaretoken'),
+                    'X-Requested-With': 'XMLHttpRequest' // Identify as AJAX request
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.status === 'success') {
+                    // Create and append the new message
+                    const newMessageContainer = document.createElement('div');
+                    const messageSender = data.message.sender_is_current_user ? 'sent' : 'received';
+                    newMessageContainer.className = `chat-message-container ${messageSender}`;
+
+                    let avatarHtml = '';
+                    if (!data.message.sender_is_current_user) {
+                        const avatarUrl = data.message.sender_avatar_url || '{% static "assets/images/default.png" %}';
+                        avatarHtml = `<img src="${avatarUrl}" class="chat-avatar me-2" alt="Profile">`;
+                    }
+                    
+                    newMessageContainer.innerHTML = avatarHtml + `
+                        <div class="chat-message ${messageSender}">
+                            ${data.message.text}
+                        </div>
+                    `;
+
+                    chatBox.appendChild(newMessageContainer);
+
+                    // Clear the input and scroll to the new message
+                    messageInput.value = '';
+                    chatBox.scrollTop = chatBox.scrollHeight;
+                } else {
+                    console.error('Error:', data.error);
+                }
+            })
+            .catch(error => console.error('Fetch error:', error));
+        });
+    });
+</script>
+{% endblock %}

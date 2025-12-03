@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'assets/css/globals.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/myprofile.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+<div id="alert-container">
+    {% include 'alert.html' %}
+</div>
+
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="profile">
+            <form id="profile-form" method="POST" enctype="multipart/form-data" action="{% url 'update_profile_image' %}">
+                {% csrf_token %}
+                <label for="id_profile_image">
+                    {% if request.user.userprofile.profile_image and request.user.userprofile.profile_image.url != '/media/profile/default.jpg' %}
+                        <img src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}" alt="Profile Image" class="profile-img" />
+                    {% else %}
+                        <img src="{% static 'assets/images/default.png' %}" alt="Default Profile" class="profile-img" />
+                    {% endif %}
+                </label>
+                <input id="id_profile_image" name="profile_image" type="file" style="display: none;" onchange="document.getElementById('profile-form').submit();" />
+            </form>
+
+            <div class="profile-name">{{ request.user.first_name }} {{ request.user.last_name}}</div>
+            <div class="profile-role">{{ request.user.userprofile.role|capfirst }}</div>
+        </div>
+            <nav class="nav-links">
+                <a href="?section=profile" class="{%if section == 'profile' %}active"{% endif%}>
+                    <span class="nav-icon"><img src="{% static 'assets/images/icons/dashboard.svg' %}" alt="Dashboard Icon" class="icon" style="width: 13px; height: 13px;" /></span> Dashboard
+                </a>
+                <a href="?section=inbox" class="{% if section == 'inbox' %}active{% endif %}">
+                    <span class="nav-icon"><img src="{% static 'assets/images/icons/message.svg' %}" alt="Inbox Icon" class="icon" /></span> Inbox
+                </a>
+                <a href="?section=requests" class="{% if section == 'requests' %}active{% endif %}">
+                    <span class="nav-icon">
+                        <img src="{% static 'assets/images/icons/requests.svg' %}" alt="Requests Icon" class="icon" /></span> Requests
+                </a>
+                <a href="?section=favourite" class="{% if section == 'favourite' %}active{% endif %}">
+                    <span class="nav-icon"><i class="fas fa-list-alt"></i></span> Favourite Lists
+                </a>
+                <a href="?section=notifications" class="{% if section == 'notifications' %}active{% endif %}">
+                    <span class="nav-icon">
+                        <img src="{% static 'assets/images/icons/noti.svg' %}" alt="Notification Icon" class="icon" /></span> Notifications
+                </a>
+
+            </nav>
+     <div class="sidebar-footer" style="padding-top: 300px;">
+        <a href="#"><span class="nav-icon" ><img src="{% static 'assets/images/icons/info.svg' %}" alt="Help Icon" class="icon" /></span> Help & Support</a>
+        <a href="{% url 'logout_confirm' %}" class="logout"><span class="nav-icon"><img src="{% static 'assets/images/icons/log-out.svg' %}" alt="Logout Icon" class="icon" /></span> Log Out</a>
+      </div>
+    </aside>
+
+    <main class="main">
+        <div class="content-sections-wrapper">
+            {% if section == "profile" %}
+                <form id="profile-image-form-main" method="post" action="{% url 'update_profile_image' %}" enctype="multipart/form-data"  style="display: none;">
+                    {% csrf_token %}
+                    <input type="file" name="profile_image" id="profile-image-input-main" accept="image/*" onchange="this.form.submit();">
+                </form>
+                <form method="POST" action="{% url 'myprofile' %}" id="profile-edit-form" class="view-mode">
+                    {% csrf_token %}
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">Personal Details</h3>
+                            <div class="top-controls">
+                                <button type="button" class="edit-button">Edit</button>
+                                <button type="submit" class="save-button" id="saveBtn" style="display: none;">Save</button>
+                            </div>
+                        </div>
+
+                        <div class="details-grid">
+                            <div class="profile-picture-card">
+                                {% if request.user.userprofile.profile_image %}
+                                    <img class="user-main-photo" src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}" alt="User Profile Picture" id="main-profile-photo" />
+                                {% else %}
+                                    <img class="user-main-photo" src="{% static 'assets/images/default.jpg' %}" alt="Default User Profile" id="main-profile-photo" />
+                                {% endif %}
+                                <div class="edit-icon" style="cursor: pointer;">
+                                    <img src="{% static 'assets/images/icons/editp.svg' %}" alt="Edit Icon" onclick="document.getElementById('profile-image-input-main').click();" />
+                                </div>
+                                
+                            </div>
+                            <div class="details-columns">
+                                <div class="detail-group">
+                                    <div class="detail-label">Name</div>
+                                    <div class="detail-value">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                                </div>
+                                <div class="detail-group">
+                                    <div class="detail-label">Username</div>
+                                    <div class="detail-value view-mode">{{ request.user.username }}</div>
+                                    <div class="input-edit edit-mode">{{ user_form.username }}</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">Contact Details</h3>
+                        </div>
+                        <div class="details-columns">
+                            <div class="detail-group">
+                                <div class="detail-label">Phone Number</div>
+                                <div class="detail-value view-mode">{% if request.user.userprofile.phone_number %}{{ request.user.userprofile.phone_number }}{% else %}N/A{% endif %}</div>
+                                <div class="input-edit edit-mode">{{ user_profile_form.phone_number.as_widget }}</div>
+                            </div>
+                            <div class="detail-group">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value">{{ request.user.email }}</div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="section-card">
+                        <div class="section-header">
+                            <h3 class="section-title">Address</h3>
+                        </div>
+                        <div class="details-columns">
+                            <div class="detail-group">
+                                <div class="detail-label">City</div>
+                                <div class="detail-value view-mode">{% if request.user.userprofile.address %}{{ request.user.userprofile.address }}{% else %}N/A{% endif %}</div>
+                                <div class="input-edit edit-mode">{{ user_profile_form.address }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="section-card">
+                    <h3 class="section-title">Submitted Document</h3>
+                    <div class="document-dropdown-wrapper">
+                        <div class="document-display">
+                            <div class="citizenship-picture-card">
+                                {% if request.user.userprofile.citizenship_image %}
+                                    <img class="user-main-photo" src="{{ request.user.userprofile.citizenship_image.url }}" alt="User Citizenship Picture" />
+                                {% else %}
+                                    <img class="user-main-photo" src="{% static 'assets/images/citizenship.jpg' %}" alt="Default User Citizenship" />
+                                {% endif %}
+                            </div>
+                            <img class="dropdown-arrow" src="{% static 'assets/images/icons/file-image.svg' %}" alt="Dropdown Arrow" />
+                            <div class="document-name">
+                                {% if request.user.userprofile.citizenship_number %}
+                                    Citizenship No: {{ request.user.userprofile.citizenship_number}}
+                                {% else %}
+                                    No Citizenship No. Available
+                                {% endif %}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            {% endif %}
+
+
+            {% if section == "inbox" %}
+                {% include "sections/rdash_inbox.html" %}
+            {% endif %}
+
+            {% if section == "requests" %}
+                {% include "sections/rdash_requests.html" %}
+            {% endif %}
+
+            {% if section == "favourite" %}
+                {% include "sections/rdash_favourite.html" %}
+            {% endif %}
+
+            {% if section == "notifications" %}
+                {% include "sections/rdash_noti.html" %}
+            {% endif %}
+
+
+        </div>
+    </main>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const form = document.getElementById('profile-edit-form');
+        const editBtn = document.querySelector('.edit-button');
+        const saveBtn = document.getElementById('saveBtn');
+
+        editBtn.addEventListener('click', function() {
+            if (form.classList.contains('view-mode')) {
+                form.classList.remove('view-mode');
+                form.classList.add('edit-mode');
+                editBtn.style.display = 'none';
+                saveBtn.style.display = 'inline-block';
+            } else {
+                form.classList.remove('edit-mode');
+                form.classList.add('view-mode');
+                editBtn.style.display = 'inline-block';
+                saveBtn.style.display = 'none';
+            }
+        });
+    });
+</script>
+
+
+{% endblock %}

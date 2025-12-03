@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+
+<div class="property-added-wrapper">
+  <style>
+    /* Scoped styles inside a wrapper to avoid global clash */
+    .property-added-wrapper {
+      font-family: 'Roboto', sans-serif;
+      background-color: #f2f7ff;
+      min-height: 70vh; /* adjust height */
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      padding: 40px 20px;
+      box-sizing: border-box;
+    }
+
+    .success-container {
+      background-color: #ffffff;
+      padding: 40px 60px;
+      border-radius: 12px;
+      text-align: center;
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+      max-width: 400px;
+      width: 100%;
+      animation: fadeInScale 0.5s ease forwards;
+    }
+
+    .success-container h1 {
+      color: #28a745;
+      margin-bottom: 15px;
+      font-size: 2.2rem;
+    }
+
+    .success-container p {
+      color: #555;
+      margin-bottom: 30px;
+      font-size: 1.1rem;
+      line-height: 1.5;
+    }
+
+    .success-container a {
+      display: inline-block;
+      text-decoration: none;
+      background-color: #007bff;
+      color: white;
+      padding: 12px 28px;
+      border-radius: 8px;
+      font-weight: 600;
+      margin: 8px 10px 0 10px;
+      transition: background-color 0.3s ease, transform 0.2s ease;
+      box-shadow: 0 4px 10px rgba(0, 123, 255, 0.3);
+    }
+
+    .success-container a:hover,
+    .success-container a:focus {
+      background-color: #0056b3;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(0, 86, 179, 0.5);
+      outline: none;
+    }
+
+    /* subtle fade-in and scale animation */
+    @keyframes fadeInScale {
+      from {
+        opacity: 0;
+        transform: scale(0.95);
+      }
+      to {
+        opacity: 1;
+        transform: scale(1);
+      }
+    }
+  </style>
+
+  <div class="success-container">
+    <h1>✅ Property Added Successfully!</h1>
+    <p>Your property has been listed on the platform.</p>
+    <a href="{% url 'addproperty' %}">Add Another Property</a>
+    <a href="{% url 'home' %}">Return to Homepage</a>
+  </div>
+</div>
+
+{% endblock %}

@@ -1,0 +1,251 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* --- General Page Layout --- */
+    .requests-page-container {
+        display: flex;
+        justify-content: center;
+        max-width: 1200px;
+        margin: 20px auto;
+        gap: 30px;
+    }
+
+    .requests-section {
+        flex: 1;
+        background-color: #fff;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 20px;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    .requests-section-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        border-bottom: 2px solid #007bff;
+        padding-bottom: 10px;
+        margin-bottom: 20px;
+    }
+
+    /* --- Card Styles --- */
+    .request-list {
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    .request-card {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: 15px;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        background-color: #fcfcfc;
+        transition: box-shadow 0.2s ease;
+    }
+
+    .request-card:hover {
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .request-details {
+        display: flex;
+        align-items: center;
+        gap: 20px;
+    }
+
+    .user-info {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+
+    .profile-image {
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        object-fit: cover;
+        border: 1px solid #ccc;
+    }
+
+    .user-name {
+        font-weight: bold;
+        color: #555;
+    }
+
+    .property-info {
+        display: flex;
+        flex-direction: column;
+    }
+
+    .property-name {
+        font-size: 1.1rem;
+        color: #333;
+        font-weight: bold;
+    }
+
+    .request-date {
+        font-size: 0.8rem;
+        color: #777;
+    }
+
+    /* --- Buttons & Links --- */
+    .action-buttons {
+        display: flex;
+        gap: 10px;
+    }
+
+    .action-buttons a,
+    .action-buttons button {
+        text-decoration: none;
+        font-weight: bold;
+        padding: 8px 12px;
+        border-radius: 5px;
+        border: none;
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+    }
+
+    .view-details-link {
+        color: #007bff;
+        text-decoration: none;
+        font-size: 0.9em;
+    }
+
+    .view-details-link:hover {
+        text-decoration: underline;
+    }
+
+    .accept-button {
+        background-color: #f35525;
+        color: white;
+    }
+
+    .accept-button:hover {
+        background-color: #cf6530;
+    }
+
+    .decline-button,
+    .cancel-button {
+        background-color: #000000;
+        color: white;
+    }
+
+    .decline-button:hover,
+    .cancel-button:hover {
+        background-color: #3c3c3c;
+    }
+
+
+    .chat-button {
+        background-color: #f35525;
+        color: white;
+        padding: 10px;
+        border-radius: 12px;
+    }
+
+    .chat-button:hover {
+        background-color: #cf6530;
+    }
+
+    .no-requests-message {
+        text-align: center;
+        color: #777;
+        padding: 40px;
+        font-style: italic;
+    }
+</style>
+
+<div class="requests-page-container">
+    <div class="requests-section pending-section">
+        <h2 class="requests-section-title">Pending Requests</h2>
+        <div class="request-list">
+            {% if pending_requests %}
+            {% for request_obj in pending_requests %}
+            <div class="request-card">
+                <div class="request-details">
+                    <div class="user-info">
+                        {% if request.user.userprofile == request_obj.proprietor %}
+                        <img src="{% if request_obj.renter.profile_image %}{{ request_obj.renter.profile_image.url }}{% else %}{% static 'assets/images/default.png' %}{% endif %}"
+                            alt="Renter's profile image" class="profile-image">
+                        <span class="user-name">{{ request_obj.renter.user.username }}</span>
+                        {% else %}
+                        <img src="{% if request_obj.proprietor.profile_image %}{{ request_obj.proprietor.profile_image.url }}{% else %}{% static 'assets/images/default.png' %}{% endif %}"
+                            alt="Proprietor's profile image" class="profile-image">
+                        <span class="user-name">{{ request_obj.proprietor.user.username }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="property-info">
+                        <a href="{% url 'propertydetails' slug=request_obj.property.slug %}"
+                            class="view-details-link">{{ request_obj.property.name }}</a>
+                        <span class="request-date">{{ request_obj.created_at|date:"F d, Y" }}</span>
+                    </div>
+                </div>
+                <div class="action-buttons">
+                    {% if request.user.userprofile == request_obj.proprietor %}
+                    <form action="{% url 'manage_request' request_id=request_obj.id action='accept' %}" method="post"
+                        style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="accept-button">Accept</button>
+                    </form>
+
+                    <form action="{% url 'manage_request' request_id=request_obj.id action='reject' %}" method="post"
+                        style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="decline-button">Decline</button>
+                    </form>
+
+                    {% else %}
+                    <form action="{% url 'cancel_property_request' request_id=request_obj.id %}" method="post"
+                        style="display:inline;">
+                        {% csrf_token %}
+                        <button type="submit" class="cancel-button">Cancel</button>
+                    </form>
+                    {% endif %}
+                </div>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="no-requests-message">No pending requests.</p>
+            {% endif %}
+        </div>
+    </div>
+
+    <div class="requests-section accepted-section">
+        <h2 class="requests-section-title">Accepted Requests</h2>
+        <div class="request-list">
+            {% if accepted_requests %}
+            {% for request_obj in accepted_requests %}
+            <div class="request-card">
+                <div class="request-details">
+                    <div class="user-info">
+                        {% if request.user.userprofile == request_obj.proprietor %}
+                        <img src="{% if request_obj.renter.profile_image %}{{ request_obj.renter.profile_image.url }}{% else %}{% static 'assets/images/default.png' %}{% endif %}"
+                            alt="Renter's profile image" class="profile-image">
+                        <span class="user-name">{{ request_obj.renter.user.username }}</span>
+                        {% else %}
+                        <img src="{% if request_obj.proprietor.profile_image %}{{ request_obj.proprietor.profile_image.url }}{% else %}{% static 'assets/images/default.png' %}{% endif %}"
+                            alt="Proprietor's profile image" class="profile-image">
+                        <span class="user-name">{{ request_obj.proprietor.user.username }}</span>
+                        {% endif %}
+                    </div>
+                    <div class="property-info">
+                        <a href="{% url 'propertydetails' slug=request_obj.property.slug %}"
+                            class="view-details-link">{{ request_obj.property.name }}</a>
+                        <span class="request-date">{{ request_obj.created_at|date:"F d, Y" }}</span>
+                    </div>
+                </div>
+                <a href="{% url 'chat' request_id=request_obj.id %}" class="chat-button">Chat</a>
+            </div>
+            {% endfor %}
+            {% else %}
+            <p class="no-requests-message">No accepted requests.</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
+{% endblock %}

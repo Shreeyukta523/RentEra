@@ -1,0 +1,126 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap"
+    rel="stylesheet">
+
+  <title>RENTERA</title>
+
+  <!-- Bootstrap core CSS -->
+  <link href="{% static 'vendor/bootstrap/css/bootstrap.min.css' %}" rel="stylesheet">
+
+  <!-- Additional CSS Files -->
+  <link rel="stylesheet" href="{% static 'assets/css/fontawesome.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/template_properties.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/owl.css' %}">
+  <link rel="stylesheet" href="{% static 'assets/css/animate.css' %}">
+
+  <!-- External CSS from CDN -->
+  <link rel="stylesheet" href="https://unpkg.com/swiper@7/swiper-bundle.min.css">
+
+
+  <!--
+
+TemplateMo 591 villa agency
+
+https://templatemo.com/tm-591-villa-agency
+
+-->
+</head>
+
+<body>
+
+  <!-- ***** Preloader Start ***** -->
+  <div id="js-preloader" class="js-preloader">
+    <div class="preloader-inner">
+      <span class="dot"></span>
+      <div class="dots">
+        <span></span>
+        <span></span>
+        <span></span>
+      </div>
+    </div>
+  </div>
+  <!-- ***** Preloader End ***** -->
+
+  <div class="sub-header">
+    <div class="container">
+      <div class="row">
+        <div class="col-lg-8 col-md-8">
+          <ul class="info">
+            <li><i class="fa fa-envelope"></i> rentera@Nepal.com</li>
+            <li><i class="fa fa-map"></i>Bhaktapur</li>
+          </ul>
+        </div>
+        <div class="col-lg-4 col-md-4">
+          <ul class="social-links">
+            <li><a href="https://www.facebook.com/"><i class="fab fa-facebook"></i></a></li>
+            <li><a href="https://x.com/" target="_blank"><i class="fab fa-twitter"></i></a></li>
+            <li><a href="https://www.threads.com/"><i class="fa-brands fa-threads"></i></a></li>
+            <li><a href="https://www.instagram.com/"><i class="fab fa-instagram"></i></a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ***** Header Area Start ***** -->
+  <header class="header-area header-sticky">
+    <div class="container">
+      <div class="row">
+        <div class="col-12">
+          <nav class="main-nav">
+            <!-- ***** Logo Start ***** -->
+            <a href="{% url 'home' %}" class="logo">
+              <h1>RentEra</h1>
+            </a>
+            <!-- ***** Logo End ***** -->
+            <!-- ***** Menu Start ***** -->
+            <ul class="nav">
+              <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
+              <li><a href="{% url 'property' %}"
+                  class="{% if request.path == '/property/' %}active{% endif %}">Properties</a></li>
+                  
+              {% if user.is_authenticated and user.userprofile.role == "renter" %}
+              <li>
+                  <a href="{% url 'myfavourites' %}" class="{% if request.path == 'favourites/' %}active{% endif %}">
+                    Favourites
+                  </a>
+              </li>
+              {% endif %}
+
+              <li><a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}active{% endif %}">Contact
+                  Us</a></li>
+              <li>
+                {% if user.is_authenticated %}
+                {% if user.userprofile.role == 'proprietor' %}
+                <a href="{% url 'proprietordashboard' %}">
+                  <i class="fa-solid fa-bell"></i></i></i> Dashboard
+                </a>
+                {% elif user.userprofile.role == 'renter' %}
+                <a href="{% url 'myprofile' %}">
+                  <i class="fa-solid fa-bell"></i></i>Dashboard
+                </a>
+                {% endif %}
+                {% else %}
+                <a href="{% url 'signup' %}">
+                  <i class="fa-solid fa-user"></i></i> Account
+                </a>
+                {% endif %}
+
+              </li>
+            </ul>
+            <a class='menu-trigger'>
+              <span>Menu</span>
+            </a>
+            <!-- ***** Menu End ***** -->
+          </nav>
+        </div>
+      </div>
+    </div>
+  </header>

@@ -1,0 +1,630 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* CSS Variables for better consistency and theming */
+:root {
+  --color-dark-bg: #1d1d1d;
+  --color-text-light: #999;
+  --color-text-dark: #222;
+  --color-white: #fff;
+  --color-main-bg: #8080801a; /* Slightly lighter than original for background, close to the image */
+  --color-sidebar-active-bg: #000;
+  --color-sidebar-hover-bg: #444;
+  --color-primary-orange: #e14c25; /* Used for property price, add button, search icon */
+  --color-secondary-blue: #007fff; /* Used for navbar active border */
+  --color-green: #00cc9c; /* Used for notifications count, sidebar active border, profile border */
+  --color-red: #ff5920; /* Used for inbox count (changed from #e62216 to match original inbox color), logout */
+  --color-blue-requests: #1361e9; /* Used for requests count */
+  --color-gray-light: #eee;
+  --color-gray-medium: #bbb;
+  --color-gray-dark: #666;
+  --color-gray-translucent: rgba(153, 153, 153, 0.5); /* For dotted border */
+  --color-sidebar-border: rgba(255, 255, 255, 0.1); /* For sidebar footer separator */
+
+  --border-radius-card: 14px;
+  --border-radius-button: 20px;
+  --border-radius-search: 28px;
+  --border-radius-sidebar-item: 8px;
+
+  --box-shadow-light: 0 0 8px rgb(0 0 0 / 0.1);
+  --box-shadow-card-hover: 0 0 20px #ff7b52a6;
+  --box-shadow-button: 0 4px 8px rgb(255 71 39 / 0.3);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-main-bg); /* Use variable */
+  color: var(--color-text-dark); /* Use variable */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Container for entire layout */
+.dashboard{
+    display: flex; /* This is the key: arranges children side-by-side */
+    min-height: 100vh; /* Make the container at least the full viewport height */
+    /* You might want to adjust padding or max-width for the overall layout */
+    padding: 20px; /* Example padding around the entire layout */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+    align-items: flex-start; /* Aligns items to the start of the cross-axis (top) */
+    gap: 20px; /* Adds space between the sidebar and main content */
+}
+
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--color-dark-bg); /* Use variable */
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  top: 50px;
+  flex-direction: column;
+  padding: 28px 32px 50px 20px;
+
+  color: var(--color-text-light); /* Use variable */
+  border-radius: var(--border-radius-card) 0 0 var(--border-radius-card); /* Use variable */
+  box-shadow: var(--box-shadow-light); /* Added shadow for better visual separation from background */
+}
+
+/* Logo */
+/* .logo {
+  margin-bottom: 50px;
+  font-weight: 700;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  color: var(--color-text-dark);
+}  /* Use variable */
+
+
+/* .logo svg {
+  width: 43px;
+  height: 43px;}
+  /* Specific colors for the logo SVG if needed, or define in HTML for inline SVG */
+
+
+/* .logo-text {
+  color: var(--color-white);
+  font-weight: 700;
+  font-size: 24px;
+  letter-spacing: 1px;
+} */
+
+/* Profile */
+.profile {
+  text-align: center;
+  margin-bottom: 50px;
+  color: var(--color-white); /* Use variable */
+}
+
+.profile-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 14px auto;
+  border: 3px solid var(--color-green); /* Used green for border as per image */
+  cursor:pointer;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.profile-role {
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--color-gray-dark); /* Use variable for clarity */
+}
+
+/* Sidebar nav */
+.nav-links {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 15px;
+}
+
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  color: var(--color-gray-dark); /* Use variable */
+  border-radius: var(--border-radius-sidebar-item); /* Use variable */
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.nav-links a:hover:not(.active) {
+  background-color: var(--color-sidebar-hover-bg); /* Use variable */
+  color: var(--color-primary-orange); 
+
+}
+
+.nav-links a.active {
+  background-color: black; 
+  border-left: 3px solid var(--color-primary-orange);
+  color: var(--color-white);
+  font-weight: 600;
+
+}
+
+
+
+.nav-icon {
+  display: inline-flex;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+ .nav-icon img.icon {
+    width: 18px;
+    height: 18px;
+   }
+
+/* .nav-count {
+  font-size: 12px;
+  min-width: 18px;
+  height: 18px;
+  line-height: 18px;
+  border-radius: 9999px;
+  text-align: center;
+  font-weight: 600;
+  color: var(--color-white); /* Use variable */
+  /* margin-left: auto; }Push counts to the right */
+
+
+.count-inbox {
+  background: var(--color-red); /* Use variable */
+}
+.count-requests {
+  background: var(--color-blue-requests); /* Use variable */
+}
+.count-notifications {
+  background: var(--color-green); /* Use variable */
+}
+
+/* Bottom links & logout */
+.sidebar-footer {
+  font-size: 14px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 20px; /* Added padding to separate from main nav */
+  border-top: 1px solid var(--color-sidebar-border); /* Subtle separator */
+}
+
+.sidebar-footer a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-gray-dark); /* Use variable */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.sidebar-footer a:hover {
+  color: var(--color-primary-orange); /* Use primary orange on hover for consistency */
+}
+
+.logout {
+  color: var(--color-red); /* Use variable */
+  font-weight: 600;
+}
+.logout:hover {
+  color: #ff3322; /* Slightly darker red on hover */
+}
+
+/* Main area */
+.main {
+  flex-grow: 1;
+  background-color: var(--color-white); /* Use variable */
+  /* margin: 30px 30px 30px 20px; Adjusted left margin to match gap, keeping right margin for overall layout */
+  border-radius: var(--border-radius-card); /* Use variable */
+  box-shadow: var(--box-shadow-light); /* Use variable */
+  /* padding: 28px 32px 32px 32px; */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar at top of main */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 32px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.navbar a {
+  color: var(--color-gray-dark); /* Use variable */
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 4px; /* Added for consistent spacing when active */
+}
+
+.navbar a:hover {
+  color: var(--color-primary-orange); /* Use variable */
+}
+
+.navbar a.active {
+  border-bottom: 2px solid var(--color-secondary-blue); /* Use variable */
+  padding-bottom: 4px;
+  color: var(--color-text-dark); /* Use variable */
+  font-weight: 600;
+}
+
+/* Dropdown arrow */
+.navbar .dropdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar .dropdown svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--color-gray-dark); /* Use variable */
+  stroke-width: 2;
+}
+
+/* Dashboard header area */
+.dashboard-header {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary-orange); /* Use variable */
+  user-select: none;
+}
+
+/* Controls: Add property & Search */
+.top-controls {
+  margin-top: 26px; /* Adjusted margin-top to separate from header */
+  margin-bottom: 26px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 15px; /* Add gap for wrapped items */
+}
+
+/* Add property button */
+.add-property-btn {
+  background-color: var(--color-primary-orange); /* Use variable */
+  color: var(--color-white); /* Use variable */
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius-button); /* Use variable */
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14.5px;
+
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--box-shadow-button); /* Use variable */
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.add-property-btn:hover {
+  background-color: #ff6a3a; /* Slightly darker orange on hover */
+}
+
+.btn-plus {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 14px;
+  user-select: none;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: var(--border-radius-search);
+  padding: 8px 15px;
+  gap: 0px;
+
+}
+
+
+ 
+.search-box input[type="search"] {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 14.5px;
+  /* padding: 8px; */
+}
+
+.search-box button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* padding-left: 8px; */
+  display: flex;
+  align-items: center;
+}
+
+/* .search-box svg {
+  width: 18px;
+  height: 18px;
+  stroke: var(--color-primary-orange);
+  stroke-width: 2;
+  fill: none;
+} */
+
+/* Properties grid and add property */
+.properties-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Single property card */
+.property-card {
+  border-radius: var(--border-radius-card); /* Use variable */
+  box-shadow: 0 0 12px rgb(0 0 0 / 0.07);
+  padding: 14px;
+  background-color: var(--color-white); /* Use variable */
+  transition: box-shadow 0.3s ease;
+}
+.property-card:hover {
+  box-shadow: var(--box-shadow-card-hover); /* Use variable */
+}
+
+.property-image {
+  width: 100%;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.property-title {
+  font-weight: 600;
+  font-size: 14.5px;
+  margin-bottom: 6px;
+  color: var(--color-text-dark); /* Ensure consistent color */
+}
+
+.property-price {
+  color: var(--color-primary-orange); /* Use variable */
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Location row */
+.property-location {
+  font-size: 12px;
+  color: var(--color-text-light); /* Use variable */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.location-icon {
+  width: 13px;
+  height: 13px;
+  stroke: var(--color-text-light); /* Use variable */
+  stroke-width: 2;
+}
+
+/* Add property card */
+.add-property-card {
+  border: 2px dotted var(--color-gray-translucent); /* Use variable */
+  border-radius: var(--border-radius-card); /* Use variable */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-gray-dark); /* Use variable */
+  font-weight: 600;
+  min-height: 140px; /* Ensure it has height similar to image */
+  user-select: none;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.add-property-card:hover {
+  background-color: #fcfcfc;
+  border-color: var(--color-primary-orange);
+}
+
+.add-property-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--color-primary-orange); /* Use variable */
+}
+
+/* Right side Recent Messages area */
+.recent-messages {
+  margin-left: 30px;
+  flex-shrink: 0;
+  width: 340px;
+  border-radius: var(--border-radius-card); /* Use variable */
+  padding: 18px 20px;
+  border: 1px solid var(--color-gray-light); /* Use variable */
+  font-size: 14px;
+  background: var(--color-white); /* Use variable */
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--box-shadow-light); /* Added shadow for consistency */
+  max-height: 590px; /* Align max-height with properties-scroll */
+  overflow-y: auto; /* Enable scrolling for messages too */
+}
+.recent-messages-header {
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--color-text-dark); /* Ensure consistent color */
+}
+/* Message entry */
+.message-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-gray-light); /* Use variable */
+}
+.message-item:last-child {
+  border-bottom: none;
+}
+.message-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.message-texts {
+  flex-grow: 1;
+}
+.message-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+  color: var(--color-text-dark); /* Use variable */
+}
+.message-snippet {
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--color-gray-dark); /* Use variable */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scroll for properties grid */
+.properties-scroll {
+  overflow-y: auto;
+  padding-right: 4px;
+  flex-grow: 1;
+}
+
+/* Custom scroll styles */
+.properties-scroll::-webkit-scrollbar,
+.recent-messages::-webkit-scrollbar { /* Apply scrollbar to messages too */
+  width: 8px;
+}
+.properties-scroll::-webkit-scrollbar-thumb,
+.recent-messages::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-orange); /* Use variable */
+  border-radius: 10px;
+}
+.properties-scroll::-webkit-scrollbar-track,
+.recent-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+/* 
+ 
+
+/* Alert Message Pop-up */
+#alert-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 100%;
+    max-width: 400px;
+    padding: 0 10px;
+}
+
+.alert {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.alert.visible {
+    opacity: 1;
+}
+/* Add this to the end of your profile.css file */
+
+/* Button Color Fix */
+
+/* Base styles for the Save button */
+.top-controls .save-button {
+    background-color: var(--primary-color,  #ff6a3a);
+    color: white;
+    border: 1px solid var(--primary-color,  #ff6a3a);
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px; /* This creates the rounded corners */
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover and active states for the Save button to create the pop-out effect */
+.top-controls .save-button:hover,
+.top-controls .save-button:active {
+    transform: translateY(-2px); /* Moves the button up slightly */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a shadow for the pop-out effect */
+}
+
+
+.input-edit input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* .view-mode .input-edit { display: none; }
+.view-mode .view-mode { display: inline; }
+
+.edit-mode .input-edit { display: inline; }
+.edit-mode .view-mode { display: none; } */
+
+
+/*
+ * By default, hide all edit-mode input fields.
+ * This rule is very specific to ensure it is not overridden.
+ */
+#profile-edit-form .input-edit {
+    display: none !important;
+}
+
+/*
+ * When the form has the 'edit-mode' class,
+ * hide the view-mode text and show the edit-mode input fields.
+ */
+#profile-edit-form.edit-mode .view-mode {
+    display: none !important;
+}
+
+#profile-edit-form.edit-mode .input-edit {
+    display: block !important; /* Use 'block' to ensure it takes its own line */
+}

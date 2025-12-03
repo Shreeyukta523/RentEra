@@ -1,0 +1,592 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* CSS Variables for better consistency and theming */
+:root {
+    --color-dark-bg: #1d1d1d;
+    --color-text-light: #999;
+    --color-text-dark: #222;
+    --color-white: #fff;
+    --color-main-bg: #8080801a; /* Slightly lighter than original for background, close to the image */
+    --color-sidebar-active-bg: #000;
+    --color-sidebar-hover-bg: #444;
+    --color-primary-orange: #e14c25; /* Used for property price, add button, search icon */
+    --color-secondary-blue: #007fff; /* Used for navbar active border */
+    --color-green: #00cc9c; /* Used for notifications count, sidebar active border, profile border */
+    --color-red: #ff5920; /* Used for inbox count (changed from #e62216 to match original inbox color), logout */
+    --color-blue-requests: #1361e9; /* Used for requests count */
+    --color-gray-light: #eee;
+    --color-gray-medium: #bbb;
+    --color-gray-dark: #666;
+    --color-gray-translucent: rgba(153, 153, 153, 0.5); /* For dotted border */
+    --color-sidebar-border: rgba(255, 255, 255, 0.1); /* For sidebar footer separator */
+
+    --border-radius-card: 14px;
+    --border-radius-button: 20px;
+    --border-radius-search: 28px;
+    --border-radius-sidebar-item: 8px;
+
+    --box-shadow-light: 0 0 8px rgba(0, 0, 0, 0.1);
+    --box-shadow-card-hover: 0 0 20px rgba(255, 123, 82, 0.65);
+    --box-shadow-button: 0 4px 8px rgba(255, 71, 39, 0.3);
+}
+
+/* Base Styles */
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: var(--color-main-bg);
+    color: var(--color-text-dark);
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+/* Container for entire layout */
+/* .dashboard {
+    display: flex;
+    min-height: 100vh;
+    padding: 20px; 
+    box-sizing: border-box; 
+    align-items: flex-start; 
+    gap: 20px; 
+} */
+
+
+/* Sidebar */
+/* .sidebar {
+    background-color: var(--color-dark-bg);
+    width: 250px;
+    height: auto ;
+    flex-shrink: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: 28px 32px 50px 20px;
+    color: var(--color-text-light);
+    border-radius: var(--border-radius-card) 0 0 var(--border-radius-card);
+    box-shadow: var(--box-shadow-light);
+} */
+
+/* Profile */
+.profile {
+    text-align: center;
+    margin-bottom: 50px;
+    color: var(--color-white);
+}
+
+.profile-img {
+    width: 96px;
+    height: 96px;
+    border-radius: 50%;
+    object-fit: cover;
+    margin: 0 auto 14px auto;
+    border: 3px solid var(--color-green);
+    cursor:pointer;
+}
+
+.profile-name {
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+}
+
+.profile-role {
+    font-weight: 300;
+    font-size: 13px;
+    color: var(--color-gray-dark);
+}
+
+/* Sidebar nav */
+/* .nav-links {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    font-size: 15px;
+}
+
+.nav-links a {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 18px;
+    color: var(--color-gray-dark);
+    border-radius: var(--border-radius-sidebar-item);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    user-select: none;
+}
+
+.nav-links a:hover:not(.active) {
+    background-color: var(--color-sidebar-hover-bg);
+    color: var(--color-primary-orange);
+}
+
+.nav-links a.active {
+    background-color: var(--color-sidebar-active-bg);
+    border-left: 3px solid var(--color-green);
+    color: var(--color-white);
+    font-weight: 600;
+}
+
+.nav-icon {
+    display: inline-flex;
+    font-size: 18px;
+    color: inherit;
+    opacity: 0.8;
+} */
+
+/* Style for img icons within nav-icon */
+/* .nav-icon img.icon {
+    width: 18px;
+    height: 18px; 
+    filter: invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(150%) contrast(100%); /* Example filter to make icons visible on dark background */
+
+
+/* .nav-links a.active .nav-icon img.icon {
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(200%) contrast(100%);
+}  */
+
+
+/* .nav-count {
+    font-size: 12px;
+    min-width: 18px;
+    height: 18px;
+    line-height: 18px;
+    border-radius: 9999px;
+    text-align: center;
+    font-weight: 600;
+    color: var(--color-white);
+    margin-left: auto;
+}
+
+.count-inbox {
+    background: var(--color-red);
+}
+.count-requests {
+    background: var(--color-blue-requests);
+}
+.count-notifications {
+    background: var(--color-green);
+} */
+
+/* Bottom links & logout */
+.sidebar-footer {
+    font-size: 14px;
+    margin-top: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    padding-top: 335px;
+    border-top: 1px solid var(--color-sidebar-border);
+}
+
+.sidebar-footer a {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    color: var(--color-gray-dark);
+    cursor: pointer;
+    transition: color 0.3s ease;
+}
+.sidebar-footer a:hover {
+    color: var(--color-primary-orange);
+}
+
+.logout {
+    /* color: var(--color-red); */
+    font-weight: 600;
+    background: none; /* Ensure button looks like a link */
+    border: none;
+    padding: 0;
+    cursor: pointer;
+    font-size: 14px; /* Match sidebar-footer a font-size */
+    display: flex; /* Align icon and text */
+    align-items: center;
+    gap: 40px;
+    width: fit-content; /* Prevent button from taking full width */
+}
+.logout:hover {
+    color: #ff3322;
+}
+
+/* Main area */
+.main {
+    flex-grow: 1;
+    height: 100% ;
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--box-shadow-light);
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+}
+
+/* Navbar at top of main (kept for consistency, though not explicitly in user's profile.html) */
+.navbar {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 32px;
+    font-size: 14px;
+    font-weight: 400;
+    margin-bottom: 20px; /* Added spacing below navbar */
+}
+
+.navbar a {
+    color: var(--color-gray-dark);
+    cursor: pointer;
+    position: relative;
+    padding-bottom: 4px;
+}
+
+.navbar a:hover {
+    color: var(--color-primary-orange);
+}
+
+.navbar a.active {
+    border-bottom: 2px solid var(--color-secondary-blue);
+    padding-bottom: 4px;
+    color: var(--color-text-dark);
+    font-weight: 600;
+}
+
+/* Dropdown arrow */
+.navbar .dropdown {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.navbar .dropdown svg {
+    width: 12px;
+    height: 12px;
+    stroke: var(--color-gray-dark);
+    stroke-width: 2;
+}
+
+/* Dashboard header area */
+.dashboard-header {
+    margin-top: 0; /* Adjusted as navbar now provides spacing */
+    margin-bottom: 24px; /* Spacing below header */
+    font-size: 24px; /* Increased font size for main header */
+    font-weight: 700; /* Made bolder */
+    color: var(--color-text-dark); /* Changed to dark text for main header */
+    user-select: none;
+}
+
+/* New: Wrapper for all content sections */
+.content-sections-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Spacing between sections */
+    flex-grow: 1; /* Allow this wrapper to take available space */
+}
+
+/* New: Card style for each section (Personal Details, Contact, etc.) */
+.section-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--box-shadow-light);
+    padding: 20px;
+    border: 1px solid var(--color-gray-light); /* Subtle border */
+}
+
+/* New: Header for each section card */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* New: Section title within each card */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary-orange); /* Using orange for section titles */
+    margin: 0; /* Remove default margin */
+}
+
+/* New: Edit button within section header */
+.edit-button {
+    background-color: var(--color-primary-orange);
+    color: var(--color-white);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius-button);
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14.5px;
+    box-shadow: var(--box-shadow-button);
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #ff6a3a;
+}
+
+/* New: Grid for details (e.g., Personal Details) */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column */
+    gap: 20px;
+}
+
+@media (min-width: 768px) { /* Adjust for larger screens */
+    .details-grid {
+        grid-template-columns: 150px 1fr; /* Image column and details column */
+        align-items: flex-start;
+    }
+}
+
+
+/* New: Columns for details (e.g., Contact Details) */
+.details-columns {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+@media (min-width: 768px) {
+    .details-columns {
+        flex-direction: row; /* Two columns on larger screens */
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .details-columns .detail-group {
+        flex: 1 1 calc(50% - 10px); /* Two items per row with gap */
+    }
+}
+
+
+/* New: Group for a single detail (label + value) */
+.detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-gray-dark);
+}
+
+.detail-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+/* New: Profile Picture Card specific styling */
+.profile-picture-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    position: relative; /* For positioning the edit icon */
+}
+
+.profile-picture-card .user-main-photo {
+    width: 150px; /* Larger size for main profile photo */
+    height: 200px;
+    /* border-radius: 50%; */
+    object-fit: cover;
+    border: 3px solid var(--color-green);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.profile-picture-card .user-main-photo:hover {
+    transform: scale(1.05);
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 15px; /* Adjust as needed */
+    right: 15px; /* Adjust as needed */
+    background-color: var(--color-primary-orange);
+    border-radius: 50%;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: var(--box-shadow-button);
+    transition: background-color 0.3s ease;
+}
+
+.edit-icon:hover {
+    background-color: #ff6a3a;
+}
+
+.edit-icon img {
+    width: 18px;
+    height: 18px;
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(200%) contrast(100%); /* Make icon white */
+}
+
+
+.verification-photo-button {
+    background-color: var(--color-secondary-blue); /* Different color for this button */
+    color: var(--color-white);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius-button);
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    box-shadow: 0 4px 8px rgba(0, 127, 255, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.verification-photo-button:hover {
+    background-color: #0069d9;
+}
+
+/* New: Citizenship Picture Card specific styling */
+.citizenship-picture-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Take full width of its container */
+    max-width: 300px; /* Max width for the image */
+    margin: 0 auto; /* Center the image */
+}
+
+.citizenship-picture-card .user-main-photo {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-card); /* Rounded corners for document image */
+    object-fit: cover;
+    border: 1px solid var(--color-gray-medium);
+}
+
+/* New: Document dropdown wrapper */
+.document-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.document-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    /* border-bottom: 1px solid var(--color-gray-light); / / Optional separator */
+}
+
+.document-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    flex-grow: 1;
+}
+
+.dropdown-arrow {
+    width: 16px;
+    height: 16px;
+    filter: invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(50%) contrast(100%); /* Make arrow darker */
+}
+
+
+
+ 
+
+/* Alert Message Pop-up */
+#alert-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 100%;
+    max-width: 400px;
+    padding: 0 10px;
+}
+
+.alert {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.alert.visible {
+    opacity: 1;
+}
+/* Add this to the end of your profile.css file */
+
+/* Button Color Fix */
+
+/* Base styles for the Save button */
+.top-controls .save-button {
+    background-color: var(--primary-color,  #ff6a3a);
+    color: white;
+    border: 1px solid var(--primary-color,  #ff6a3a);
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px; /* This creates the rounded corners */
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover and active states for the Save button to create the pop-out effect */
+.top-controls .save-button:hover,
+.top-controls .save-button:active {
+    transform: translateY(-2px); /* Moves the button up slightly */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a shadow for the pop-out effect */
+}
+
+
+.input-edit input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+/* .view-mode .input-edit { display: none; }
+.view-mode .view-mode { display: inline; }
+
+.edit-mode .input-edit { display: inline; }
+.edit-mode .view-mode { display: none; } */
+
+
+/*
+ * By default, hide all edit-mode input fields.
+ * This rule is very specific to ensure it is not overridden.
+ */
+#profile-edit-form .input-edit {
+    display: none !important;
+}
+
+/*
+ * When the form has the 'edit-mode' class,
+ * hide the view-mode text and show the edit-mode input fields.
+ */
+#profile-edit-form.edit-mode .view-mode {
+    display: none !important;
+}
+
+#profile-edit-form.edit-mode .input-edit {
+    display: block !important; /* Use 'block' to ensure it takes its own line */
+}

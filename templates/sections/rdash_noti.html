@@ -1,0 +1,40 @@
+<div class="container mt-5">
+        <h3>Your Notifications</h3>
+        {% if sent_requests %}
+            <div class="list-group">
+                {% for req in sent_requests %}
+                    <div class="list-group-item list-group-item-action mb-2 shadow-sm rounded">
+                        <div class="d-flex w-100 justify-content-between">
+                            <h5 class="mb-1">Request for <a href="{% url 'propertydetails' req.property.slug %}">{{ req.property.name }}</a></h5>
+                            <small class="text-muted">{{ req.created_at|date:"M d, Y H:i" }}</small>
+                        </div>
+                        <p class="mb-1"><strong>Status:</strong>
+                            {% if req.status == 'pending' %}
+                                <span class="badge bg-warning text-dark">Pending</span>
+                            {% elif req.status == 'accepted' %}
+                                <span class="badge bg-success">Accepted</span>
+                            {% elif req.status == 'rejected' %}
+                                <span class="badge bg-danger">Rejected</span>
+                            {% elif req.status == 'cancelled' %}
+                                <span class="badge bg-secondary">Cancelled</span>
+                            {% endif %}
+                        </p>
+                        <small>Proprietor: {{ req.proprietor.user.username }}</small>
+                        <div class="mt-2">
+                            {% if req.status == 'pending' %}
+                                <a href="{% url 'cancel_property_request' req.id %}" class="btn btn-sm btn-outline-danger">Cancel Request</a>
+                            {% elif req.status == 'accepted' %}
+                                
+                                <span class="text-success small me-2 mb-2">You can now contact {{ req.renter.user.username }} directly.</span>
+                                <a href="{% url 'chat' req.id %}" class="btn btn-sm btn-outline-primary me-2 mb-2">Chat</a>
+
+                            {% endif %}
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+        {% else %}
+            <p>You have not sent any property requests yet.</p>
+            <a href="{% url 'property' %}" class="btn btn-primary">Browse Properties</a>
+        {% endif %}
+</div>

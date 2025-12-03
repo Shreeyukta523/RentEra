@@ -1,0 +1,228 @@
+<!--footer section-->
+{% load static %}
+
+<footer>
+    <div class="container">
+      <div class="col-lg-8">
+        <p>© 2025 RentEra Nepal Pvt. Ltd. All rights reserved. Empowering your rental journey across Nepal.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- Scripts -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+  <script src="{% static 'vendor/bootstrap/js/bootstrap.min.js' %}"></script>
+  <script src="{% static 'assets/js/isotope.min.js' %}"></script>
+  <script src="{% static 'assets/js/owl-carousel.js' %}"></script>
+  <script src="{% static 'assets/js/counter.js' %}"></script>
+  <script src="{% static 'assets/js/custom.js' %}"></script>
+<script src="https://cdn.tailwindcss.com"></script>
+
+<style>
+    /* Custom RenTera Accent Colors */
+    .bg-rentera-accent {
+        background-color: rgb(227, 82, 25); /* The new primary accent color */
+    }
+    .hover-rentera-dark:hover {
+        background-color: rgb(227, 82, 25); /* Slightly darker for hover effect */
+    }
+    .focus-ring-rentera-accent:focus {
+        /* Set Tailwind focus ring color variable */
+        --tw-ring-color: rgb(227, 82, 25);
+    }
+
+    /* Styling for the messages */
+    .message {
+        padding: 10px 14px;
+        border-radius: 18px;
+        max-width: 85%;
+        word-wrap: break-word;
+        font-size: 0.95rem;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    }
+    .user-message {
+        align-self: flex-end;
+        background-color: rgb(218, 118, 78); /* Matches the new branding color */
+        color: white; /* Changed text color to white for better contrast */
+        border-bottom-right-radius: 4px;
+    }
+    .bot-message {
+        align-self: flex-start;
+        background-color: #f3f4f6; /* Tailwind gray-100 */
+        color: #1f2937; /* Gray-800 */
+        border-bottom-left-radius: 4px;
+    }
+    #chat-body {
+        overflow-y: auto;
+    }
+</style>
+
+<!-- Chatbot Container (Fixed Overlay) -->
+<div id="chatbot-container" class="fixed bottom-4 right-4 z-50">
+    <!-- Chat Button (Floating) -->
+    <button id="chat-button" class="w-16 h-16 bg-rentera-accent hover-rentera-dark text-white text-3xl font-extrabold rounded-full shadow-2xl transition-all duration-300 ease-in-out transform hover:scale-110 focus:outline-none">
+        🤓
+    </button>
+
+    <!-- Chat Window (Initially Hidden) -->
+    <div id="chat-window" class="hidden absolute bottom-20 right-0 w-80 md:w-96 h-[450px] bg-white rounded-xl shadow-2xl flex flex-col transition-all duration-300 ease-in-out">
+        <div id="chat-header" class="flex justify-between items-center p-4 bg-rentera-accent rounded-t-xl shadow-md">
+            <h3 class="text-xl font-bold text-white">RentEra AI-Chatbot</h3>
+            <button id="close-button" class="text-white hover:text-gray-200 focus:outline-none text-2xl p-1 leading-none">
+                &times;
+            </button>
+        </div>
+        
+        <div id="chat-body" class="flex-1 p-4 flex flex-col space-y-3 bg-gray-50">
+            <!-- Initial welcome message (using the V4 combined greeting) -->
+            <div class="message bot-message">
+                Hello! I'm Renny, the dedicated RenTera AI Chatbot, and your personalized guide for connecting great people with great places. Whether you're a renter or proprietor, I'm here to help you navigate our features, understand our safety process, and clarify everything. What can I help you find today? 🏡✨
+            </div>
+        </div>
+
+        <div id="chat-footer" class="p-4 border-t border-gray-200 flex space-x-2">
+            <input type="text" id="user-input" placeholder="Ask a question..." class="flex-1 p-3 border border-gray-300 rounded-lg focus:ring-2 focus-ring-rentera-accent focus:border-rentera-accent transition-colors" autocomplete="off">
+            <button id="send-button" class="px-4 py-3 bg-rentera-accent hover-rentera-dark text-white rounded-lg font-semibold transition-colors focus:outline-none">
+                Send
+            </button>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const chatButton = document.getElementById('chat-button');
+        const chatWindow = document.getElementById('chat-window');
+        const closeButton = document.getElementById('close-button');
+        const sendButton = document.getElementById('send-button');
+        const userInput = document.getElementById('user-input');
+        const chatBody = document.getElementById('chat-body');
+
+        // --- UI LOGIC ---
+
+        chatButton.addEventListener('click', () => {
+            chatWindow.classList.toggle('hidden');
+            if (!chatWindow.classList.contains('hidden')) {
+                userInput.focus();
+                scrollToBottom();
+            }
+        });
+
+        closeButton.addEventListener('click', () => {
+            chatWindow.classList.add('hidden');
+        });
+
+        // --- MESSAGE HANDLING ---
+
+        const sendMessage = () => {
+            const messageText = userInput.value.trim();
+            if (messageText === '') return;
+
+            appendMessage(messageText, 'user');
+            userInput.value = '';
+
+            callAIBackend(messageText);
+            scrollToBottom();
+        };
+
+        sendButton.addEventListener('click', sendMessage);
+
+        userInput.addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') {
+                e.preventDefault();
+                sendMessage();
+            }
+        });
+
+        function appendMessage(text, sender, isTypingIndicator = false) {
+            const messageDiv = document.createElement('div');
+            messageDiv.classList.add('message', sender === 'user' ? 'user-message' : 'bot-message');
+            messageDiv.innerHTML = text;
+            if (isTypingIndicator) {
+                messageDiv.id = 'typing-indicator';
+                messageDiv.innerHTML = '<span class="animate-pulse">...thinking</span>';
+            }
+            chatBody.appendChild(messageDiv);
+            return messageDiv;
+        }
+
+        function removeTypingIndicator() {
+            const typingIndicator = document.getElementById('typing-indicator');
+            if (typingIndicator) {
+                typingIndicator.remove();
+            }
+        }
+
+        function scrollToBottom() {
+            chatBody.scrollTop = chatBody.scrollHeight;
+        }
+        
+        // --- Custom NLP Backend Integration (Calling the Django View) ---
+        
+        // **KEY CHANGE:** Target your Django endpoint where AIChatView is mapped
+        const CHAT_API_URL = '/api/chat/';
+
+        async function callAIBackend(userText) {
+            const typingIndicator = appendMessage('...', 'bot', true);
+            scrollToBottom();
+
+            // Payload structure expected by your Django AIChatView
+            const payload = {
+                message: userText
+            };
+
+            const MAX_RETRIES = 3;
+            let attempt = 0;
+            
+            while (attempt < MAX_RETRIES) {
+                try {
+                    // Fetch request now targets your local Django server
+                    const fetchResponse = await fetch(CHAT_API_URL, {
+                        method: 'POST',
+                        headers: { 
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(payload)
+                    });
+
+                    if (!fetchResponse.ok) {
+                        throw new Error(`HTTP error! status: ${fetchResponse.status}`);
+                    }
+
+                    const response = await fetchResponse.json();
+                    
+                    removeTypingIndicator();
+                    
+                    // The Django view returns {"ai_response": "..."}
+                    const text = response.ai_response; 
+                    
+                    if (text) {
+                        appendMessage(text, 'bot');
+                    } else {
+                        appendMessage("Hmm, my server gave an empty response. My apologies! 🤔", 'bot');
+                    }
+                    scrollToBottom();
+                    return; // Success, exit function
+                } catch (error) {
+                    attempt++;
+                    console.error(`Attempt ${attempt} failed to reach Django backend.`, error);
+                    
+                    if (attempt >= MAX_RETRIES) {
+                        removeTypingIndicator();
+                        appendMessage("Sorry, I can't connect to my brain (the server). Please check the server logs! 😔", 'bot');
+                        return;
+                    }
+                    // Exponential backoff wait
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, attempt) * 1000));
+                }
+            }
+        }
+    });
+</script>
+
+  
+
+  </body>
+  
+</html>

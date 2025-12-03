@@ -1,0 +1,1320 @@
+
+{% extends 'base.html' %}
+{% load static %}
+{% block content %}
+<link rel="stylesheet" href="{% static 'assets/css/globals.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/myprofile.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css" />
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+  .image-container {
+    position: relative;
+  }
+
+  .delete-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: #f35525;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .delete-btn i {
+    font-size: 16px;
+  }
+
+  /* Modal */
+  .delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .delete-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .delete-actions {
+    margin-top: 15px;
+  }
+
+  .confirm-delete,
+  .cancel-delete {
+    padding: 8px 16px;
+    margin: 0 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  .confirm-delete {
+    background-color: #f35525;
+    color: white;
+  }
+
+  .cancel-delete {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+</style>
+
+<div class="dashboard">
+  <aside class="sidebar">
+    <div class="profile">
+      <form id="profile-form" method="POST" enctype="multipart/form-data" action="{% url 'update_profile_image' %}">
+        {% csrf_token %}
+        <label for="id_profile_image">
+          {% if request.user.userprofile.profile_image and request.user.userprofile.profile_image.url != '/media/profile/default.jpg' %}
+          <img src="{{ request.user.userprofile.profile_image.url }}" alt="Profile Image" class="profile-img" />
+          {% else %}
+          <img src="{% static 'assets/images/default.jpg' %}" alt="Default Profile" class="profile-img" />
+          {% endif %}
+        </label>
+
+        <!-- Hidden file input -->
+        <input id="id_profile_image" name="profile_image" type="file" style="display: none;"
+          onchange="document.getElementById('profile-form').submit();" />
+      </form>
+
+      <div class="profile-name">{{ request.user.first_name }} {{ request.user.last_name}}</div>
+      <div class="profile-role">{{ request.user.userprofile.role|capfirst }}</div>
+    </div>
+
+
+    <nav class="nav-links">
+      <a href="?section=profile" class="{% if section == 'profile' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/dashboard.svg' %}" alt="Dashboard Icon"
+            class="icon" /></span> Dashboard
+      </a>
+      <a href="?section=inbox" class="{% if section == 'inbox' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/message.svg' %}" alt="Message Icon"
+            class="icon" /></span> Inbox
+      </a>
+      <a href="?section=requests" class="{% if section == 'requests' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/addacc.svg' %}" alt="Request Icon"
+            class="icon" /></span> Requests
+      </a>
+      <a href="?section=renter_lists" class="{% if section == 'renter_lists' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/requests.svg' %}" alt="Lists Icon"
+            class="icon" /></span> Renter Lists
+      </a>
+      <a href="?section=notifications" class="{% if section == 'notifications' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/noti.svg' %}" alt="Notification Icon"
+            class="icon" /></span> Notifications
+      </a>
+      <a href="?section=properties" class="{% if section == 'properties' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/map.svg' %}" alt="Profile Icon"
+            class="icon" /></span> Properties
+      </a>
+      <a href="?section=backup_properties" class="{% if section == 'backup_properties' %}active{% endif %}">
+        <span class="nav-icon"><img src="{% static 'assets/images/icons/restore.svg' %}" alt="Backup Icon"
+            class="icon" /></span> Restore
+      </a>
+    </nav>
+
+    <div class="sidebar-footer" style="padding-top: 300px;">
+      <a href="#"><span class="nav-icon"><img src="{% static 'assets/images/icons/info.svg' %}" alt="Help Icon"
+            class="icon" /></span> Help & Support</a>
+      <a href="{% url 'logout_confirm' %}" class="logout"><span class="nav-icon"><img
+            src="{% static 'assets/images/icons/log-out.svg' %}" alt="Logout Icon" class="icon" /></span> Log Out</a>
+    </div>
+  </aside>
+
+  <main class="main">
+    <div class="content-sections-wrapper">
+      {% if section == "profile" %}
+      <form id="profile-image-form-main" method="post" action="{% url 'update_profile_image' %}"
+        enctype="multipart/form-data" style="display: none;">
+        {% csrf_token %}
+        <input type="file" name="profile_image" id="profile-image-input-main" accept="image/*"
+          onchange="this.form.submit();">
+      </form>
+      <form method="POST" action="{% url 'proprietordashboard' %}" id="profile-edit-form" class="view-mode">
+        {% csrf_token %}
+        <div class="section-card">
+          <div class="section-header">
+            <h3 class="section-title">Personal Details</h3>
+            <div class="top-controls">
+              <button type="button" class="edit-button" onclick="toggleEditMode()">Edit</button>
+              <button type="submit" class="save-button" id="saveBtn" style="display: none;">Save</button>
+            </div>
+          </div>
+
+          <div class="details-grid">
+            <div class="profile-picture-card">
+              {% if request.user.userprofile.profile_image %}
+              <img class="user-main-photo"
+                src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}"
+                alt="User Profile Picture" id="main-profile-photo" />
+              {% else %}
+              <img class="user-main-photo" src="{% static 'assets/images/default.jpg' %}" alt="Default User Profile"
+                id="main-profile-photo" />
+              {% endif %}
+              <div class="edit-icon" style="cursor: pointer;">
+                <img src="{% static 'assets/images/icons/editp.svg' %}" alt="Edit Icon"
+                  onclick="document.getElementById('profile-image-input-main').click();" />
+              </div>
+
+            </div>
+
+            <div class="details-columns">
+              <div class="detail-group">
+                <div class="detail-label">Name</div>
+                <div class="detail-value">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+              </div>
+              <div class="detail-group">
+                <div class="detail-label">Username</div>
+                <div class="detail-value view-mode">{{ request.user.username }}</div>
+                <div class="input-edit edit-mode">{{ user_form.username }}</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="section-card">
+          <div class="section-header">
+            <h3 class="section-title">Contact Details</h3>
+          </div>
+          <div class="details-columns">
+            <div class="detail-group">
+              <div class="detail-label">Phone Number</div>
+              <div class="detail-value view-mode">{% if request.user.userprofile.phone_number %}{{
+                request.user.userprofile.phone_number }}{% else %}N/A{% endif %}</div>
+              <div class="input-edit edit-mode">{{ user_profile_form.phone_number.as_widget }}</div>
+            </div>
+            <div class="detail-group">
+              <div class="detail-label">Email</div>
+              <div class="detail-value">{{ request.user.email }}</div>
+            </div>
+          </div>
+        </div>
+
+
+
+        <div class="section-card">
+          <div class="section-header">
+            <h3 class="section-title">Address</h3>
+          </div>
+          <div class="details-columns">
+            <div class="detail-group">
+              <div class="detail-label">City</div>
+              <div class="detail-value view-mode">{% if request.user.userprofile.address %}{{
+                request.user.userprofile.address }}{% else %}N/A{% endif %}</div>
+              <div class="input-edit edit-mode">{{ user_profile_form.address }}</div>
+            </div>
+          </div>
+        </div>
+      </form>
+
+      <div class="section-card">
+        <h3 class="section-title">Submitted Document</h3>
+        <div class="document-dropdown-wrapper">
+          <div class="document-display">
+            <div class="citizenship-picture-card">
+              {% if request.user.userprofile.citizenship_image %}
+              <img class="user-main-photo" src="{{ request.user.userprofile.citizenship_image.url }}"
+                alt="User Citizenship Picture" />
+              {% else %}
+              <img class="user-main-photo" src="{% static 'assets/images/citizenship.jpg' %}"
+                alt="Default User Citizenship" />
+              {% endif %}
+            </div>
+            <img class="dropdown-arrow" src="{% static 'assets/images/icons/file-image.svg' %}" alt="Dropdown Arrow" />
+            <div class="document-name">
+              {% if request.user.userprofile.citizenship_number %}
+              Citizenship No: {{ request.user.userprofile.citizenship_number }}
+              {% else %}
+              No Citizenship No. Available
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      {% endif %}
+
+      {% if section == "inbox" %}
+      {% include "sections/dash_inbox.html" %}
+      {% endif %}
+
+      {% if section == "requests" %}
+      {% include "sections/dash_requests.html" %}
+      {% endif %}
+
+      {% if section == "renter_lists" %}
+      {% include "sections/dash_renters.html" %}
+      {% endif %}
+
+      {% if section == "notifications" %}
+      {% include "sections/dash_noti.html" %}
+      {% endif %}
+
+      {% if section == "properties" %}
+      {% include "sections/dash_properties.html" %}
+      {% endif %}
+
+      {% if section == "backup_properties" %}
+      {% include "sections/dash_backup_properties.html" %}
+      {% endif %}
+    </div>
+  </main>
+</div>
+
+
+<script>
+  let currentSlug = null;
+
+  function showDeleteConfirm(slug, name) {
+    currentSlug = slug;
+    document.getElementById('delete-message').innerText = `Are you sure you want to delete "${name}"?`;
+    document.getElementById('delete-confirm-modal').style.display = 'block';
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('delete-confirm-modal').style.display = 'none';
+    currentSlug = null;
+  }
+
+  function confirmDelete() {
+    if (currentSlug) {
+      fetch(`/delete-property/${currentSlug}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert("Failed to delete property.");
+            closeDeleteModal();
+          }
+        });
+    }
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('profile-edit-form');
+    const editBtn = document.querySelector('.edit-button');
+    const saveBtn = document.getElementById('saveBtn');
+
+    editBtn.addEventListener('click', function () {
+      if (form.classList.contains('view-mode')) {
+        form.classList.remove('view-mode');
+        form.classList.add('edit-mode');
+        editBtn.style.display = 'none';
+        saveBtn.style.display = 'inline-block';
+      } else {
+        form.classList.remove('edit-mode');
+        form.classList.add('view-mode');
+        editBtn.style.display = 'inline-block';
+        saveBtn.style.display = 'none';
+      }
+    });
+  });
+
+  let currentRestoreId = null;
+
+  function showRestoreConfirm(backupId, name) {
+    currentRestoreId = backupId;
+    document.getElementById('restore-message').innerText = `Are you sure you want to restore "${name}"?`;
+    document.getElementById('restore-confirm-modal').style.display = 'block';
+  }
+
+  function closeRestoreModal() {
+    document.getElementById('restore-confirm-modal').style.display = 'none';
+    currentRestoreId = null;
+  }
+
+  function confirmRestore() {
+    if (currentRestoreId) {
+        // Directly navigate to the restore view
+        window.location.href = `/restore-property/${currentRestoreId}/`;
+    }
+  }
+
+
+
+</script>
+
+
+
+{% endblock %}
+>>>>>>> Stashed changes
+
+
+
+
+############################################3
+{% load static %}
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/profile.css' %}" />
+
+<div class="dashboard-header">Your Properties</div>
+
+<div class="top-controls">
+  <!-- <a href="{% url 'addproperty' %}" class="add-property-btn">+ Add Property</a> -->
+  <form role="search" class="search-box" method="GET" action="{% url 'proprietordashboard' %}">
+    <input type="search" placeholder="Search Here...." name="q" value="{{ query|default_if_none:'' }}" />
+    <button type="submit"></button>
+  </form>
+
+</div>
+
+<div style="display:flex; flex-grow: 1;">
+  <section class="properties-scroll" style="flex-grow:1; max-height:590px; overflow-y:auto;">
+    <div class="properties-area">
+      {% for properties in backup_properties %}
+      <a href="{% url 'propertydetails' properties.slug %}" class="property-link">
+        <article class="property-card" tabindex="0">
+          <div class="image-container">
+            <img src="{{ properties.image.url }}" alt="{{ properties.name }} image" class="property-image" />
+            <button class="delete-btn"
+              onclick="event.stopPropagation(); event.preventDefault(); showRestoreConfirm('{{ properties.id }}', '{{ properties.name }}')">
+              <i class="fas fa-undo"></i>
+            </button>
+
+
+          </div>
+          <h3 class="property-title">{{ properties.name }}</h3>
+          <div class="property-price">Rs.{{ properties.price }}</div>
+          <div class="property-location">
+            <img src="{% static 'assets/images/icons/loc.svg' %}" alt="Location Icon"
+              style="  width: 13px; height: 13px;" />
+            {{ properties.address }}
+          </div>
+        </article>
+
+      </a>
+      {% empty %}
+      <p class="no-properties">You don't have any properties to restore. </p>
+      {% endfor %}
+
+      <!-- {# “Add New” card stays outside the loop #}
+          <a href="{% url 'addproperty' %}">
+            <article class="add-property-card" tabindex="0">
+              <div class="add-property-inner">+ Add New</div>
+            </article>
+          </a> -->
+    </div>
+  </section>
+
+
+  <!-- Restore Confirmation Modal -->
+  <div id="restore-confirm-modal" class="delete-modal" style="display:none;">
+    <div class="delete-modal-content">
+      <p id="restore-message"></p>
+      <div class="delete-actions">
+        <button onclick="confirmRestore()" class="confirm-delete">Yes</button>
+        <button onclick="closeRestoreModal()" class="cancel-delete">No</button>
+      </div>
+    </div>
+  </div>
+
+
+  {% load static %}
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/profile.css' %}" />
+
+<div class="dashboard-header">Your Properties</div>
+
+<div class="top-controls">
+  <a href="{% url 'addproperty' %}" class="add-property-btn">+ Add Property</a>
+
+  <form role="search" class="search-box" method="GET" action="{% url 'proprietordashboard' %}">
+    <input type="search" placeholder="Search Here...." name="q" value="{{ query|default_if_none:'' }}" />
+    <button type="submit"></button>
+  </form>
+</div>
+
+<div style="display:flex; flex-grow: 1;">
+  <section class="properties-scroll" style="flex-grow:1; max-height:590px; overflow-y:auto;">
+    <div class="properties-area">
+
+      {% for p in backup_properties %}
+      <a href="{% url 'propertydetails' p.slug %}" class="property-link">
+        <article class="property-card" tabindex="0">
+          <div class="image-container">
+
+            {% if p.main_image %}
+              <img src="{{ p.main_image }}" alt="{{ p.name }} image" class="property-image">
+            {% endif %}
+
+            <button class="delete-btn"
+              onclick="event.stopPropagation(); event.preventDefault(); showRestoreConfirm('{{ properties.id }}', '{{ properties.name }}')">
+              <i class="fas fa-undo"></i>
+            </button>
+          </div>
+
+          <h3 class="property-title">{{ p.name }}</h3>
+          <div class="property-price">Rs.{{ p.price }}</div>
+
+          <div class="property-location">
+            <img src="{% static 'assets/images/icons/loc.svg' %}" alt="Location Icon"
+                 class="location-icon" style="width: 15px; height: 15px;" />
+            {{ p.address }}
+          </div>
+
+        </article>
+      </a>
+
+      {% empty %}
+        <p class="no-properties">You don't have any properties to restore.</p>
+      {% endfor %}
+
+      <!-- “Add New” card -->
+      {% comment %} <a href="{% url 'addproperty' %}">
+        <article class="add-property-card" tabindex="0">
+          <div class="add-property-inner">+ Add New</div>
+        </article>
+      </a> {% endcomment %}
+
+    </div>
+  </section>
+</div>
+
+<!-- Restore Confirmation Modal -->
+  <div id="restore-confirm-modal" class="delete-modal" style="display:none;">
+    <div class="delete-modal-content">
+      <p id="restore-message"></p>
+      <div class="delete-actions">
+        <button onclick="confirmRestore()" class="confirm-delete">Yes</button>
+        <button onclick="closeRestoreModal()" class="cancel-delete">No</button>
+      </div>
+    </div>
+  </div>
+
+
+
+################# properties.html
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+     body, html {
+        margin: 0;
+        padding: 0;
+    }
+
+    /* Base styles */
+    .filter-form {
+        background-color: #f8f9fa; /* Lighter background for sidebar */
+        padding: 20px;
+        border-radius: 12px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        border: 1px solid #e0e0e0;
+        margin-bottom: 30px; /* Space at the bottom */
+    }
+    .property-img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 5px;
+    }
+    .card {
+        background-color: #fff; /* White background to match the image */
+        border: 1px solid #e0e0e0; /* Subtle border */
+        border-radius: 10px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1); /* More pronounced shadow */
+        transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+        overflow: hidden;
+        display: flex; /* Make card content a flex container */
+        flex-direction: column;
+        height: 100%; /* Ensure all cards are the same height */
+    }
+    .card:hover {
+        transform: translateY(-8px);
+        box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15); /* Lift card on hover */
+    }
+
+    /* Enhanced Input and Select Fields */
+    .form-control {
+        border-radius: 8px;
+        padding: 10px 15px;
+        border: 1px solid #cccccc;
+        box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.06);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    }
+    .form-control:focus {
+        border-color: #f35525; /* Use the new orange theme color */
+        box-shadow: 0 0 0 0.2rem rgba(243, 85, 37, 0.25);
+    }
+    label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 8px;
+        display: block;
+    }
+
+    /* Button Styling with new orange theme */
+    .btn-primary {
+        background-color: #f35525;
+        border-color: #f35525;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        color: #fff;
+        transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .btn-primary:hover {
+        background-color: #d14a1e; /* Darker orange on hover */
+        border-color: #d14a1e;
+        transform: translateY(-1px);
+    }
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+        border-radius: 8px;
+        padding: 10px 20px;
+        font-weight: 600;
+        transition: background-color 0.2s ease, border-color 0.2s ease, transform 0.2s ease;
+    }
+    .btn-secondary:hover {
+        background-color: #5a6268;
+        border-color: #545b62;
+        transform: translateY(-1px);
+    }
+
+    /* Dropdown Checkbox (Facilities) - Enhanced */
+    .dropdown-check-list {
+        position: relative;
+        width: 100%;
+    }
+    .dropdown-check-list .anchor {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px 15px;
+        border: 1px solid #cccccc;
+        border-radius: 8px;
+        background-color: #ffffff; /* Lighter background than sidebar */
+        color: #495057;
+        cursor: pointer;
+        transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+    }
+    .dropdown-check-list .anchor:hover {
+        background-color: #e9ecef;
+        border-color: #a3a3a3;
+    }
+    .dropdown-check-list .anchor:after {
+        content: "▼";
+        font-size: 0.8em;
+        margin-left: 10px;
+        transform: none;
+        position: static;
+    }
+    .dropdown-check-list .items {
+        border: 1px solid #cccccc;
+        border-top: none;
+        position: absolute;
+        width: 100%;
+        background-color: #fff;
+        z-index: 1000;
+        box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+        border-radius: 0 0 8px 8px;
+        max-height: 250px;
+        overflow-y: auto;
+        padding: 10px 15px;
+        box-sizing: border-box;
+        display: none;
+    }
+    .dropdown-check-list .items div {
+        margin-bottom: 8px;
+    }
+    .form-check-label {
+        cursor: pointer;
+        color: #333;
+    }
+    .form-check-input:checked + .form-check-label {
+        font-weight: 500;
+        color: #f35525; /* Use the new orange theme color */
+    }
+
+    /* Make the paginator appear static in the document flow */
+    .pagination {
+        display: flex;
+        justify-content: center;
+        padding: 20px 0;
+        margin-top: 30px;
+        border-top: 1px solid #eee;
+    }
+    .pagination a, .pagination span {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        min-width: 40px;
+        height: 40px;
+        margin: 0 5px;
+        border: 1px solid #dee2e6;
+        border-radius: 50%;
+        text-decoration: none;
+        color: #f35525; /* Use the new orange theme color */
+        background-color: #fff;
+        transition: all 0.3s ease;
+        font-weight: 600;
+    }
+    .pagination a:hover {
+        background-color: #e9ecef;
+        border-color: #f35525;
+        color: #d14a1e;
+        box-shadow: 0 2px 8px rgba(243, 85, 37, 0.2);
+    }
+    .pagination .current {
+        background-color: #f35525;
+        color: #fff;
+        border: 1px solid #f35525;
+        box-shadow: 0 4px 10px rgba(243, 85, 37, 0.3);
+        font-weight: 700;
+    }
+    .pagination .current:hover {
+        background-color: #f35525;
+        color: #fff;
+        border: 1px solid #f35525;
+    }
+
+    /* Make the filter section sticky on scroll */
+    .sidebar-sticky {
+        position: sticky;
+        top: 20px;
+    }
+
+    /* New styles for the attractive property boxes */
+    .card-body {
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        padding: 1.25rem;
+    }
+    .card-title {
+        font-weight: 700;
+        color: #333;
+        margin-bottom: 0.5rem;
+    }
+    /* Updated style for the price to make it smaller and the same color as the name */
+    .property-price-style {
+        font-size: 12px;
+        font-weight: 600;
+        color: #333; /* Same color as the property name */
+        margin-bottom: 5px !important;
+    }
+    .property-meta {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        align-items: center;
+        margin-top: 1rem;
+        margin-bottom: 1rem;
+    }
+    .property-meta p {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #666;
+        display: flex;
+        align-items: center;
+    }
+    .property-meta p i {
+        margin-right: 8px;
+        color: #f35525; /* Icons with theme color */
+    }
+    .card-footer {
+        padding: 0.75rem 1.25rem;
+        background-color: #f8f9fa;
+        border-top: 1px solid rgba(0,0,0,.125);
+    }
+
+    /* Additional styles to reduce space between button and text */
+    .item p, .item ul {
+        margin-bottom: 0.2rem !important;
+    }
+    .main-button {
+        margin-top: 10px; /* Add a small top margin to the button */
+        padding: 0 15px 15px;
+    }
+</style>
+
+<div class="container mt-4">
+    <div class="row">
+        <!-- Sidebar for filters and search -->
+        <div class="col-md-3 ">
+            <form method="get" class="filter-form">
+                <!-- Search bar -->
+                <div class="mb-4">
+                    <div class="input-group">
+                        <input type="text" name="search" class="form-control" placeholder="Search..."
+                               value="{{ selected_filters.search|default:'' }}">
+                        <button type="submit" class="btn btn-primary">Search</button>
+                    </div>
+                </div>
+
+                <!-- "Filter Properties" text is now after the search bar -->
+                <h5 class="mb-3">Filter Properties</h5>
+
+                <!-- The rest of the filters -->
+                <div class="mb-3">
+                    <label for="province-select">Province</label>
+                    <select name="province" id="province-select" class="form-control">
+                        <option value="">All Provinces</option>
+                        {% for code, name in PROVINCES %}
+                            <option value="{{ code }}" {% if selected_filters.province == code %}selected{% endif %}>{{ name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="district-input">District</label>
+                    <input type="text" name="district" id="district-input" placeholder="e.g. Kathmandu" class="form-control"
+                           value="{{ selected_filters.district|default:'' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="property-type-select">Type</label>
+                    <select name="property_type" id="property-type-select" class="form-control">
+                        <option value="">All Types</option>
+                        {% for pt in property_types %}
+                            <option value="{{ pt }}" {% if selected_filters.property_type == pt %}selected{% endif %}>{{ pt }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label for="max-price-input">Max Price</label>
+                    <input type="number" name="max_price" id="max-price-input" placeholder="e.g. 1,000,000" class="form-control"
+                           value="{{ selected_filters.max_price|default:'' }}">
+                </div>
+                <div class="mb-3">
+                    <label for="facilities-dropdown">Facilities</label>
+                    <div id="facilities-dropdown" class="dropdown-check-list" tabindex="100">
+                        <span class="anchor">Select Facilities</span>
+                        <div class="items">
+                            {% for facility in facilities %}
+                                <div class="form-check">
+                                    <input class="form-check-input" type="checkbox"
+                                           name="facilities"
+                                           id="facility_{{ facility.id }}"
+                                           value="{{ facility.id }}"
+                                           {% if facility.id|stringformat:"s" in selected_filters.facilities %}checked{% endif %}>
+                                    <label class="form-check-label" for="facility_{{ facility.id }}">
+                                        {{ facility.name }}
+                                    </label>
+                                </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                <div class="d-grid gap-2">
+                    <button type="submit" class="btn btn-primary">Filter</button>
+                    <a href="{% url 'property' %}" class="btn btn-secondary">Clear Filters</a>
+                </div>
+            </form>
+        </div>
+
+        <!-- Main content area -->
+        <div class="col-md-9">
+            <!-- Property listings -->
+            <div class="section properties">
+                <div class="container">
+                    {% if properties %}
+                    <div class="row properties-box">
+                        {% for property in properties %}
+                        <div class="col-lg-4 col-md-6 align-self-center mb-30 properties-items col-md-6 {{property.property_type|slugify}}">
+                            <div class="item">
+                                {% csrf_token %}
+                                <div class="image">
+                                    <a href="{% url 'propertydetails' slug=property.slug %}">
+                                        {% if property.main_image %}
+                                            <img src="{{ property.main_image }}" alt="{{ property.name}}">
+                                        {% endif %}
+                                    </a>
+                                </div>
+                                <span class="category" style="border-radius: 20px; padding: 4px 12px;">{{ property.property_type }}</span>
+                                <h4 class="mb-1" style="font-size: 16px;"><b>
+                                    <a href="{% url 'propertydetails' slug=property.slug %}">
+                                        {{ property.name|slice:":20" }}{% if property.name|length > 20 %}...{% endif %}
+                                    </a><b>
+                                </h4>
+                                <!-- Updated price element -->
+                                <p style="font-size: 16px; color: #f35525"class="property-price-style">Price:Rs.{{ property.price }}</p>
+                                <!-- Updated address and ul elements with reduced margin -->
+                                <p class="mb-0 text-muted fs-6">{{ property.address }}, {{ property.province }}</p>
+                                <ul class="mb-0" style="margin-bottom: 4px;">
+  <li>Number of Rooms: <span>{{ property.number_of_rooms }}</span></li>
+</ul>
+
+<div class="main-button" style="margin-top: 2px; text-align: left;">
+  <a href="{% url 'propertydetails' slug=property.slug %}">View Details</a>
+</div>
+                            </div>
+                        </div>
+                        {% endfor %}
+                    </div>
+
+                    <!-- Pagination -->
+                    {% if properties.paginator.num_pages > 1 %}
+                    <div class="pagination mt-3">
+                        {% if properties.has_previous %}
+                            <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ properties.previous_page_number }}" title="Previous Page">&laquo;</a>
+                        {% endif %}
+
+                        {% for num in properties.paginator.page_range %}
+                            {% if properties.number|add:"-3" < num and num < properties.number|add:"3" %}
+                                {% if num == properties.number %}
+                                    <span class="current">{{ num }}</span>
+                                {% else %}
+                                    <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ num }}" title="Page {{ num }}">{{ num }}</a>
+                                {% endif %}
+                            {% elif num == properties.number|add:"-3" or num == properties.number|add:"3" %}
+                                <span>...</span>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if properties.has_next %}
+                            <a href="?{% for key, value in request.GET.items %}{% if key != 'page' %}{{ key }}={{ value }}&{% endif %}{% endfor %}page={{ properties.next_page_number }}" title="Next Page">&raquo;</a>
+                        {% endif %}
+                    </div>
+                    {% endif %}
+                    {% else %}
+                        <div class="alert alert-info text-center mt-5 p-4" role="alert">
+                            <h4 class="alert-heading">No properties found!</h4>
+                            <p>We couldn't find any properties matching your current search or filter criteria.</p>
+                            <hr>
+                            <p class="mb-0">Try adjusting your filters, clearing them, or broadening your search terms.</p>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    var checkList = document.getElementById('facilities-dropdown');
+    var items = checkList.querySelector('.items');
+    var anchor = checkList.querySelector('.anchor');
+
+    anchor.onclick = function (evt) {
+        evt.stopPropagation();
+        if (items.style.display === "none" || items.style.display === "") {
+            items.style.display = "block";
+        } else {
+            items.style.display = "none";
+        }
+    };
+
+    document.addEventListener('click', function(event) {
+        var isClickInside = checkList.contains(event.target);
+        if (!isClickInside && items.style.display === "block") {
+            items.style.display = "none";
+        }
+    });
+</script>
+{% endblock %}
+
+
+
+
+##prop_dashboard.html
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'assets/css/globals.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/myprofile.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}">
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+
+<style>
+  .image-container {
+    position: relative;
+  }
+
+  .delete-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: #f35525;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .delete-btn i {
+    font-size: 16px;
+  }
+
+  /* Modal */
+  .delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .delete-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .delete-actions {
+    margin-top: 15px;
+  }
+
+  .confirm-delete,
+  .cancel-delete {
+    padding: 8px 16px;
+    margin: 0 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  .confirm-delete {
+    background-color: #f35525;
+    color: white;
+  }
+
+  .cancel-delete {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+</style>
+
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="profile">
+            <form id="profile-form" method="POST" enctype="multipart/form-data" action="{% url 'update_profile_image' %}">
+                {% csrf_token %}
+                <label for="id_profile_image">
+                    {% if request.user.userprofile.profile_image and request.user.userprofile.profile_image.url != '/media/profile/default.jpg' %}
+                        <img src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}" alt="Profile Image" class="profile-img" />
+                    {% else %}
+                        <img src="{% static 'assets/images/default.png' %}" alt="Default Profile" class="profile-img" />
+                    {% endif %}
+                </label>
+                <input id="id_profile_image" name="profile_image" type="file" style="display: none;" onchange="document.getElementById('profile-form').submit();" />
+            </form>
+
+            <div class="profile-name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+            <div class="profile-role">{{ request.user.userprofile.role|capfirst }}</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="?section=profile" class="{% if section == 'profile' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/dashboard.svg' %}" class="icon" /></span>
+                Dashboard
+            </a>
+
+            <a href="?section=inbox" class="{% if section == 'inbox' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/message.svg' %}" class="icon" /></span>
+                Inbox
+            </a>
+
+            <a href="?section=requests" class="{% if section == 'requests' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/addacc.svg' %}" class="icon" /></span>
+                Requests
+            </a>
+
+            <a href="?section=renter_lists" class="{% if section == 'renter_lists' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/requests.svg' %}" class="icon" /></span>
+                Renter Lists
+            </a>
+
+            <a href="?section=notifications" class="{% if section == 'notifications' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/noti.svg' %}" class="icon" /></span>
+                Notifications
+            </a>
+
+            <a href="?section=properties" class="{% if section == 'properties' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/map.svg' %}" class="icon" /></span>
+                Properties
+            </a>
+            <a href="?section=backup_properties" class="{% if section == 'backup_properties' %}active{% endif %}">
+              <span class="nav-icon"><img src="{% static 'assets/images/icons/restore.svg' %}" alt="Backup Icon"
+                  class="icon" /></span> Restore
+            </a>
+        </nav>
+
+        <div class="sidebar-footer" style="padding-top: 300px;">
+            <a href="#"><span class="nav-icon"><img src="{% static 'assets/images/icons/info.svg' %}" class="icon" /></span> Help & Support</a>
+            <a href="{% url 'logout_confirm' %}" class="logout">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/log-out.svg' %}" class="icon" /></span> Log Out
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="content-sections-wrapper">
+
+            {% if section == "profile" %}
+
+            <!-- Hidden form for profile image -->
+            <form id="profile-image-form-main" method="post" action="{% url 'update_profile_image' %}" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <input type="file" name="profile_image" id="profile-image-input-main" accept="image/*" onchange="this.form.submit();">
+            </form>
+
+            <!-- Profile Edit Form -->
+            <form method="POST" action="{% url 'proprietordashboard' %}" id="profile-edit-form" class="view-mode">
+                {% csrf_token %}
+
+                <!-- PERSONAL DETAILS -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Personal Details</h3>
+                        <div class="top-controls">
+                            <button type="button" class="edit-button">Edit</button>
+                            <button type="submit" class="save-button" id="saveBtn" style="display:none;">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="details-grid">
+                        <div class="profile-picture-card">
+                            {% if request.user.userprofile.profile_image %}
+                                <img class="user-main-photo" src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}" id="main-profile-photo">
+                            {% else %}
+                                <img class="user-main-photo" src="{% static 'assets/images/default.jpg' %}" id="main-profile-photo">
+                            {% endif %}
+                            <div class="edit-icon">
+                                <img src="{% static 'assets/images/icons/editp.svg' %}" onclick="document.getElementById('profile-image-input-main').click();">
+                            </div>
+                        </div>
+
+                        <div class="details-columns">
+                            <div class="detail-group">
+                                <div class="detail-label">Name</div>
+                                <div class="detail-value">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="detail-label">Username</div>
+                                <div class="detail-value view-mode">{{ request.user.username }}</div>
+                                <div class="input-edit">{{ user_form.username }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTACT DETAILS -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Contact Details</h3>
+                    </div>
+
+                    <div class="details-columns">
+                        <div class="detail-group">
+                            <div class="detail-label">Phone Number</div>
+                            <div class="detail-value view-mode">
+                                {% if request.user.userprofile.phone_number %}{{ request.user.userprofile.phone_number }}{% else %}N/A{% endif %}
+                            </div>
+                            <div class="input-edit">{{ user_profile_form.phone_number.as_widget }}</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">{{ request.user.email }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADDRESS -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Address</h3>
+                    </div>
+                    <div class="details-columns">
+                        <div class="detail-group">
+                            <div class="detail-label">City</div>
+                            <div class="detail-value view-mode">
+                                {% if request.user.userprofile.address %}{{ request.user.userprofile.address }}{% else %}N/A{% endif %}
+                            </div>
+                            <div class="input-edit edit-mode">{{ user_profile_form.address }}</div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- SUBMITTED DOCUMENT -->
+            <div class="section-card">
+                <h3 class="section-title">Submitted Document</h3>
+
+                <div class="document-dropdown-wrapper">
+                    <div class="document-display">
+                        <div class="citizenship-picture-card">
+                            {% if request.user.userprofile.citizenship_image %}
+                                <img class="user-main-photo" src="{{ request.user.userprofile.citizenship_image.url }}">
+                            {% else %}
+                                <img class="user-main-photo" src="{% static 'assets/images/citizenship.jpg' %}">
+                            {% endif %}
+                        </div>
+
+                        <img class="dropdown-arrow" src="{% static 'assets/images/icons/file-image.svg' %}">
+
+                        <div class="document-name">
+                            {% if request.user.userprofile.citizenship_number %}
+                                Citizenship No: {{ request.user.userprofile.citizenship_number }}
+                            {% else %}
+                                No Citizenship No. Available
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% if section == "inbox" %}
+                {% include "sections/dash_inbox.html" %}
+            {% endif %}
+
+            {% if section == "requests" %}
+                {% include "sections/dash_requests.html" %}
+            {% endif %}
+
+            {% if section == "renter_lists" %}
+                {% include "sections/dash_renter_lists.html" %}
+            {% endif %}
+
+            {% if section == "notifications" %}
+                {% include "sections/dash_noti.html" %}
+            {% endif %}
+
+            {% if section == "properties" %}
+                {% include "sections/dash_properties.html" %}
+            {% endif %}
+
+            {% if section == "backup_properties" %}
+                {% include "sections/dash_backup_properties.html" %}
+            {% endif %}
+
+        </div>
+    </main>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('profile-edit-form');
+    const editBtn = document.querySelector('.edit-button');
+    const saveBtn = document.getElementById('saveBtn');
+
+    editBtn.addEventListener('click', function () {
+        // If currently in VIEW mode, switch to EDIT mode
+        if (form.classList.contains('view-mode')) {
+            form.classList.remove('view-mode');
+            form.classList.add('edit-mode');
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+        } 
+        // OPTIONAL: If clicking 'Edit' is meant to toggle back to 'View' mode 
+        // (though usually, the Save button handles this in a full application)
+        else {
+            form.classList.remove('edit-mode');
+            form.classList.add('view-mode');
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+        }
+    });
+    
+    // NOTE: In a complete implementation, you'd usually add a 'Cancel' button 
+    // that executes the ELSE block above, and the 'Save' button submits the form.
+});
+
+let currentSlug = null;
+
+  function showDeleteConfirm(slug, name) {
+    currentSlug = slug;
+    document.getElementById('delete-message').innerText = `Are you sure you want to delete "${name}"?`;
+    document.getElementById('delete-confirm-modal').style.display = 'block';
+  }
+
+  function closeDeleteModal() {
+    document.getElementById('delete-confirm-modal').style.display = 'none';
+    currentSlug = null;
+  }
+
+  function confirmDelete() {
+    if (currentSlug) {
+      fetch(`/delete-property/${currentSlug}/`, {
+        method: 'POST',
+        headers: {
+          'X-CSRFToken': '{{ csrf_token }}',
+        },
+      })
+        .then(response => {
+          if (response.ok) {
+            location.reload();
+          } else {
+            alert("Failed to delete property.");
+            closeDeleteModal();
+          }
+        });
+    }
+  }
+      function toggleEditMode() {
+      const viewElements = document.querySelectorAll('.view-mode')
+      const editElements = document.querySelectorAll('.edit-mode')
+      const saveBtn = document.getElementById('saveBtn')
+
+      viewElements.forEach((el) => (el.style.display = 'none'))
+      editElements.forEach((el) => (el.style.display = 'block'))
+      saveBtn.style.display = 'inline-block'
+    }
+
+    let currentRestoreId = null;
+
+    function showRestoreConfirm(backupId, name) {
+        currentRestoreId = backupId;
+        document.getElementById('restore-message').innerText = `Are you sure you want to restore "${name}"?`;
+        document.getElementById('restore-confirm-modal').style.display = 'block';
+    }
+
+    function closeRestoreModal() {
+        document.getElementById('restore-confirm-modal').style.display = 'none';
+        currentRestoreId = null;
+    }
+
+    function confirmRestore() {
+        if (currentRestoreId) {
+            // Directly navigate to the restore view
+            window.location.href = `/restore-property/${currentRestoreId}/`;
+        }
+    }
+</script>
+
+{% endblock %}
+

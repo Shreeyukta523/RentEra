@@ -1,0 +1,160 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    form[action*="paypal.com"] input[type="image"] {
+        display: none;
+    }
+
+    .payment-container {
+        background-color: white;
+        padding: 40px;
+        border-radius: 12px;
+        max-width: 500px;
+        margin: 40px auto;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.08);
+        font-family: 'Segoe UI', sans-serif;
+    }
+
+    .payment-container h2 {
+        color: #ff6a00;
+        margin-bottom: 20px;
+        text-align: center;
+        font-size: 22px;
+        font-weight:600;
+    }
+
+    .price-details {
+        background-color: #f9f9f9;
+        padding: 20px;
+        border-radius: 8px;
+        margin-bottom: 30px;
+        font-size: 16px;
+        color: #333;
+        box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.05);
+    }
+
+    .price-details .row {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 10px;
+    }
+
+    .price-details .row:last-child {
+        font-weight: bold;
+        font-size: 18px;
+        color: #222;
+    }
+
+    .payment-buttons {
+        display: flex;
+        justify-content: center; /* center horizontally */
+        gap: 20px; /* space between buttons */
+    }
+
+    .paypal-btn {
+        background-color: #ff6a00;
+        color: white;
+        padding: 12px 28px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .paypal-btn:hover {
+        background-color: #e05a00;
+    }
+
+    .esewa-btn {
+        background-color: #28a745; /* authentic green */
+        color: white;
+        padding: 12px 28px;
+        font-size: 16px;
+        border: none;
+        border-radius: 8px;
+        cursor: pointer;
+        transition: background 0.3s ease;
+    }
+
+    .esewa-btn:hover {
+        background-color: #218838; /* darker green on hover */
+    }
+
+    .payment-container h2 {
+        color: #ff6a00;
+        margin-bottom: 25px;
+        text-align: center;
+    }
+
+    .rate-container {
+        background-color: #f9f9f9;
+        border: 1px solid #eee;
+        border-radius: 10px;
+        padding: 20px;
+        margin-bottom: 30px;
+    }
+
+    .price-line {
+        display: flex;
+        justify-content: space-between;
+        margin-bottom: 12px;
+        font-size: 17px;
+    }
+
+    .rate-line .label {
+        font-weight: 500;
+    }
+
+    .total-line .label {
+        font-weight: 600;
+    }
+
+    .amount {
+        white-space: nowrap;
+    }
+
+
+</style>
+
+<div class="payment-container">
+    <h2>Confirm Payment</h2>
+
+      <div class="rate-container">
+        <div class="price-line rate-line">
+            <span class="label">Rate:</span>
+            <span class="amount">Rs. 100 per room</span>
+        </div>
+        <div class="price-line total-line">
+            <span class="label">Total:</span>
+            <span class="amount">Rs. {{ total_price|default:"0" }}</span>
+        </div>
+    </div>
+
+
+    <div class="payment-buttons">
+            {{ paypal_form.render|safe }}
+            <button id="custom-paypal-btn" class="paypal-btn">Pay with PayPal</button>
+
+            <!-- eSewa v2 form -->
+        <form action="{{ esewa_payment_url }}" method="POST">
+            {% csrf_token %}
+            {% for key, val in esewa_fields.items %}
+                <input type="hidden" name="{{ key }}" value="{{ val }}">
+            {% endfor %}
+            <button type="submit" class="esewa-btn">Pay with eSewa</button>
+        </form>
+    </div>
+
+</form>
+
+</div>
+
+<script>
+    document.getElementById('custom-paypal-btn').addEventListener('click', function () {
+        document.querySelector('form[action*="paypal.com"]').submit();
+    });
+</script>
+{% endblock %}

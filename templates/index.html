@@ -1,0 +1,1490 @@
+{% extends 'base.html' %}
+{% load static %}
+<link rel="stylesheet" href="{% static 'assets/css/homepage.css' %}">
+<div class="container">
+  <div class="row">
+    <div class="col-lg-12">
+      <h1>Welcome to Rentera</h1>
+      <p>Your one-stop solution for finding and listing rental properties.</p>
+    </div>
+  </div>
+
+{% block content %}
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap');
+
+  /* HERO SECTION */
+  /* HERO SECTION */
+
+  
+.hero {
+    height: 100vh;
+    background-image: url("{% static 'assets/images/banner-01.jpg' %}");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    color: #fff;
+    text-align: left;
+    transition: all 1s ease-in-out;
+}
+
+/* ON HOVER → PLAY ANIMATION */
+.hero:hover {
+    animation: changeBg 8s infinite linear;
+}
+
+/* KEYFRAMES FOR MULTIPLE BACKGROUND IMAGES */
+@keyframes changeBg {
+    0% {
+        background-image: url("{% static 'assets/images/banner-01.jpg' %}");
+    }
+    33% {
+        background-image: url("{% static 'assets/images/banner-02.jpg' %}");
+    }
+    66% {
+        background-image: url("{% static 'assets/images/banner-03.jpg' %}");
+    }
+    100% {
+        background-image: url("{% static 'assets/images/banner-01.jpg' %}");
+    }
+}
+
+  .hero-overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.2); /* Slight dark overlay for better text readability */
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+  }
+
+  .hero-content {
+    position: relative;
+    z-index: 10;
+    padding-top: 10%;
+    padding-left: 10%;
+    padding-bottom: 25%;
+    width: 50%;
+    color: #fff;
+  }
+
+  .hero-content h1 {
+    font-size: 3rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+  }
+
+  .hero-content p {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    font-family: 'Montserrat', sans-serif;
+    color: #fff;
+  }
+
+.search-container {
+  position: absolute;
+  top: 20%;
+  right: 5%;
+  width: 280px;
+  background: rgba(255, 255, 255, 0.15);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 10px;
+  padding: 20px;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+}
+
+.search-container h3 {
+  text-align: center;
+  color: #fff;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
+
+.search-container .form-group {
+  margin-bottom: 12px;
+}
+
+.search-container label {
+  display: block;
+  font-size: 14px;
+  color: #fff;
+  margin-bottom: 5px;
+}
+
+.search-container select,
+.search-container input {
+  width: 100%;
+  padding: 8px;
+  border-radius: 5px;
+  border: none;
+  outline: none;
+  background-color: #ffffff; 
+  /* Ensure the text inside the dropdown is black or a dark color */
+  color: #000000;
+}
+
+.search-container button {
+  width: 100%;
+  background-color: #f35525;
+  border: none;
+  color: #fff;
+  font-weight: bold;
+  padding: 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: 0.3s ease;
+}
+
+.search-container button:hover {
+  background-color: #f35525;
+}
+
+
+  /* HERO BUTTONS */
+  .hero-buttons a {
+    margin: 10px;
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    text-decoration: none;
+    font-family: 'Montserrat', sans-serif;
+    transition: all 0.3s ease;
+  }
+
+  .primary-btn {
+    background-color: #f35525;
+    color: white;
+  }
+
+  .primary-btn:hover {
+    background-color: #f35525;
+  }
+
+/* ========================================= */
+    /* === FEATURED PROPERTIES STYLES (New) === */
+    /* ========================================= */
+    
+    /* --- Global Reset and Section Styling --- */
+    body {
+        margin: 0;
+        background-color: #f7f7f7;
+    }
+    .featured-properties-section {
+        max-width: 1200px;
+        margin: 40px auto;
+        padding: 20px;
+    }
+    .section-title {
+        text-align: center;
+        font-size: 2.5em;
+        color: #333;
+        margin-bottom: 10px;
+    }
+    .section-subtitle {
+        text-align: center;
+        font-size: 1.1em;
+        color: #777;
+        margin-bottom: 40px;
+    }
+
+    /* --- Filter Buttons --- */
+    .filter-buttons {
+        display: flex;
+        justify-content: center;
+        flex-wrap: wrap;
+        gap: 15px;
+        margin-bottom: 40px;
+    }
+    .filter-btn {
+        background-color: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        padding: 10px 20px;
+        cursor: pointer;
+        font-size: 16px;
+        color: #555;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .filter-btn:hover {
+        border-color: #f35525;
+        color: #f35525;
+        box-shadow: 0 2px 8px rgba(171, 150, 144, 0.2);
+    }
+    .filter-btn.active {
+        background-color: #fffdfbff;
+        border-color: #f35525;
+        color: #f35525;
+        font-weight: bold;
+    }
+
+    /* --- Carousel Structure --- */
+    .carousel-container {
+        position: relative;
+    }
+    .carousel-viewport {
+        overflow: hidden;
+        padding: 10px 0;
+    }
+    .property-row {
+        display: flex;
+        transition: transform 0.5s ease-in-out;
+
+        will-change: transform;   
+    }
+
+    /* --- Carousel Navigation --- */
+    .nav-button {
+        position: absolute;
+        top: 50%;
+        
+        transform: translateY(-50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        border: none;
+        padding: 15px;
+        cursor: pointer;
+        z-index: 20;
+        font-size: 20px;
+        line-height: 1;
+        border-radius: 50%;
+        opacity: 0.7;
+        transition: opacity 0.3s;
+    }
+    .nav-button:hover { opacity: 1; }
+    .nav-button:disabled {
+        opacity: 0.2;
+        cursor: not-allowed;
+    }
+    .prev-button { left: -20px; }
+    .next-button { right: -20px; }
+
+    /* --- Property Card --- */
+    .property-card {
+        flex: 0 0 calc(100% / 3);
+        max-width: calc(100% / 3);
+        padding: 15px;
+        box-sizing: border-box;
+    }
+    .card-content {
+        background-color: white;
+        border-radius: 8px;
+        overflow: hidden;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        position: relative;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .card-content:hover {
+        transform: scale(1.05);
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 10;
+    }
+    .property-image-container {
+        height: 200px;
+        overflow: hidden;
+        position: relative;
+    }
+    .property-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+    .property-tag {
+        position: absolute;
+        top: 15px;
+        left: 15px;
+        background-color: #ff5722;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+        font-size: 14px;
+        font-weight: bold;
+        text-transform: uppercase;
+        z-index: 5;
+    }
+    .property-details { padding: 15px; }
+    .feature-tags {
+        margin-bottom: 10px;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 5px;
+        min-height: 22px;
+    }
+    .feature-tag {
+        display: inline-block;
+        background-color: #ffe0b2;
+        color: #e65100;
+        padding: 5px 8px;
+        border-radius: 4px;
+        font-size: 12px;
+        font-weight: bold;
+    }
+    .property-name {
+        color: #e65100;
+        font-size: 18px;
+        font-weight: bold;
+        margin: 5px 0;
+    }
+    .price {
+        color: #ff0000;
+        font-size: 24px;
+        font-weight: bold;
+        margin: 10px 0;
+    }
+    .rooms-line {
+        font-size: 16px;
+        color: #555;
+        margin-bottom: 10px;
+    }
+    .view-details-btn {
+        display: block;
+        width: 100%;
+        padding: 12px;
+       border-radius: 0 0 8px 8px;
+        background-color: #333;
+        color: white;
+        text-align: center;
+        border: none;
+        text-decoration: none;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+    .view-details-btn:hover { background-color: #f35525; }
+    
+    .loading-text {
+        text-align: center;
+        width: 100%;
+        padding: 40px;
+        font-size: 1.2em;
+        color: #777;
+    }
+
+    /* --- Responsive Media Queries --- */
+    @media (max-width: 992px) {
+        .property-card {
+            flex-basis: calc(100% / 2);
+            max-width: calc(100% / 2);
+        }
+    }
+    @media (max-width: 768px) {
+        .property-card {
+            flex-basis: 100%;
+            max-width: 100%;
+        }
+        .nav-button {
+            padding: 10px;
+            font-size: 16px;
+        }
+        .prev-button { left: 5px; }
+        .next-button { right: 5px; }
+    }
+
+    
+/* Responsive */
+@media (max-width: 480px) {
+  .property-card img {
+    height: 140px;
+  }
+}
+/* Owner Invitation Banner */
+.owner-invite {
+  background: linear-gradient(90deg, #e4c8af 0%, #f4bc96 100%);
+  color: #000;
+  padding: 60px 20px;
+  text-align: center;
+  border-radius: 12px;
+  margin: 80px 0;
+  box-shadow: 0 8px 20px rgba(255, 153, 0, 0.4);
+}
+
+.owner-invite .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.owner-invite h2 {
+  font-size: 2.5rem;
+  font-weight: 700;
+  margin-bottom: 15px;
+}
+
+.owner-invite p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  font-weight: 500;
+}
+
+.owner-invite .btn-primary {
+  background-color: #000;
+  color: #f5f5f5;
+  font-weight: 700;
+  padding: 14px 32px;
+  border-radius: 30px;
+  text-decoration: none;
+  font-size: 1.1rem;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  display: inline-block;
+  cursor: pointer;
+}
+
+.owner-invite .btn-primary:hover {
+  background-color: #333;
+  color: #d14d0b;
+}
+
+/* Section: How It Works */
+.how-it-works {
+  background-color: #f9f9f9;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.how-it-works .container {
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+.how-it-works h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  color: #222;
+  font-weight: 700;
+}
+
+.how-it-works .subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 50px;
+}
+
+.steps {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  gap: 40px;
+}
+
+.step {
+  background-color: #fff;
+  padding: 30px 20px;
+  border-radius: 15px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.07);
+  max-width: 300px;
+  flex: 1;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+}
+
+.icon {
+  font-size: 3rem;
+  margin-bottom: 15px;
+  color:  #f35525;
+}
+
+.step h3 {
+  font-size: 1.3rem;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.step p {
+  font-size: 1rem;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .owner-invite h2 {
+    font-size: 1.9rem;
+  }
+  .owner-invite p {
+    font-size: 1rem;
+  }
+  .owner-invite .btn-primary {
+    padding: 12px 26px;
+    font-size: 1rem;
+  }
+}
+/* Testimonials Section */
+.testimonials {
+  background-color: #f0f0f5;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.testimonials .container {
+  max-width: 1000px;
+  margin: 0 auto;
+}
+
+.testimonials h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #222;
+}
+
+.testimonials .subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 50px;
+}
+
+.testimonial-cards {
+  display: flex;
+  justify-content: center;
+  gap: 30px;
+  flex-wrap: wrap;
+}
+
+.testimonial-card {
+  background-color: white;
+  max-width: 320px;
+  padding: 25px 20px 35px 20px;
+  border-radius: 15px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.3s ease;
+}
+
+.testimonial-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.avatar {
+  width: 90px;
+  height: 90px;
+  border-radius: 50%;
+  overflow: hidden;
+  margin-bottom: 15px;
+  border: 3px solid #f35525;
+}
+
+.avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.testimonial-card h3 {
+  margin-bottom: 5px;
+  font-size: 1.3rem;
+  color: #222;
+}
+
+.testimonial-card .role {
+  font-size: 0.9rem;
+  color: #888;
+  margin-bottom: 15px;
+}
+
+.stars {
+  color: #f35525;
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+}
+
+.quote {
+  font-style: italic;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.4;
+  max-width: 260px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .testimonial-cards {
+    flex-direction: column;
+    align-items: center;
+  }
+  .testimonial-card {
+    max-width: 90%;
+    margin-bottom: 30px;
+  }
+}
+
+/* FAQ Section */
+.faq-section {
+  background-color: #fff;
+  padding: 80px 20px;
+  text-align: center;
+}
+
+.faq-section .container {
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.faq-section h2 {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+  font-weight: 700;
+  color: #222;
+}
+
+.faq-section .subtitle {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 50px;
+}
+
+.faq-list {
+  text-align: left;
+}
+
+.faq-item {
+  border-bottom: 1px solid #ddd;
+  margin-bottom: 15px;
+}
+
+.faq-question {
+  width: 100%;
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  font-weight: 600;
+  padding: 18px 0;
+  cursor: pointer;
+  position: relative;
+  text-align: left;
+  color: #333;
+}
+
+.faq-toggle {
+  position: absolute;
+  right: 0;
+  top: 18px;
+  font-size: 1.5rem;
+  font-weight: 700;
+  transition: transform 0.3s ease;
+}
+
+.faq-answer {
+  max-height: 0;
+  overflow: hidden;
+  transition: max-height 0.4s ease;
+  color: #555;
+  font-size: 1rem;
+  padding-bottom: 0;
+}
+
+.faq-answer p {
+  margin: 0 0 20px 0;
+}
+
+/* Active/open FAQ */
+.faq-item.active .faq-answer {
+  max-height: 300px; /* adjust as needed */
+  padding-top: 10px;
+}
+
+.faq-item.active .faq-toggle {
+  transform: rotate(45deg);
+  color: #f35525;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+  .faq-section h2 {
+    font-size: 2rem;
+  }
+  .faq-question {
+    font-size: 1rem;
+  }
+}
+.trust-section {
+  background-color: #f5f7fa;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.trust-section .section-heading {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 10px;
+}
+
+.trust-section .section-subtitle {
+  font-size: 1.1rem;
+  color: #6c757d;
+  margin-bottom: 40px;
+}
+
+.trust-stats {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 30px;
+}
+
+.stat-card {
+  background: white;
+  padding: 30px;
+  border-radius: 12px;
+  box-shadow: 0 6px 15px rgba(0, 0, 0, 0.08);
+  width: 200px;
+  transition: transform 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+}
+
+.stat-card h3 {
+  font-size: 2rem;
+  color: #3498db;
+  margin-bottom: 5px;
+}
+
+.stat-card p {
+  color: #2c3e50;
+  font-weight: 500;
+}
+.newsletter-section {
+  background-color: #2c3e50;
+  color: white;
+  padding: 60px 20px;
+  text-align: center;
+}
+
+.newsletter-heading {
+  font-size: 2.5rem;
+  margin-bottom: 10px;
+}
+
+.newsletter-subtitle {
+  font-size: 1.1rem;
+  color: #ecf0f1;
+  margin-bottom: 30px;
+}
+
+.newsletter-form {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.newsletter-form input[type="email"] {
+  padding: 12px 15px;
+  width: 300px;
+  max-width: 90%;
+  border-radius: 8px;
+  border: none;
+  font-size: 1rem;
+}
+
+.newsletter-form button {
+  padding: 12px 20px;
+  background-color: #e67e22;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.newsletter-form button:hover {
+  background-color: #b36c3c;
+}
+.app-promo-section {
+  background: #fdfdfd;
+  padding: 70px 20px;
+}
+
+.app-promo-container {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: center;
+  gap: 40px;
+  max-width: 1200px;
+  margin: auto;
+}
+
+.app-text {
+  flex: 1;
+  min-width: 280px;
+}
+
+.app-text h2 {
+  font-size: 2.5rem;
+  color: #2c3e50;
+  margin-bottom: 20px;
+}
+
+.app-text p {
+  font-size: 1.1rem;
+  color: #555;
+  margin-bottom: 30px;
+}
+
+.app-buttons {
+  display: flex;
+  gap: 15px;
+  flex-wrap: wrap;
+}
+
+.btn {
+  padding: 12px 20px;
+  border-radius: 8px;
+  font-size: 1rem;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.playstore {
+  background-color: #34a853;
+}
+
+.playstore:hover {
+  background-color: #2c8b45;
+}
+
+.appstore {
+  background-color: #0070c9;
+}
+
+.appstore:hover {
+  background-color: #005999;
+}
+
+.app-image img {
+  width: 300px;
+  max-width: 100%;
+  border-radius: 20px;
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.1);
+}
+.cta-banner {
+  background: linear-gradient(to right, #34495e, #2c3e50);
+  padding: 80px 20px;
+  text-align: center;
+  color: white;
+}
+
+.cta-content h2 {
+  font-size: 2.8rem;
+  margin-bottom: 20px;
+}
+
+.cta-content p {
+  font-size: 1.2rem;
+  margin-bottom: 30px;
+  color: #ecf0f1;
+}
+
+.cta-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  flex-wrap: wrap;
+}
+
+.cta-btn {
+  padding: 14px 28px;
+  font-size: 1rem;
+  border: none;
+  border-radius: 8px;
+  text-decoration: none;
+  color: white;
+  transition: background-color 0.3s ease;
+}
+
+.list-btn {
+  background-color: #f07a5f;
+}
+
+.list-btn:hover {
+  background-color: #c14d00;
+}
+
+.explore-btn {
+  background-color: #1abc9c;
+}
+
+.explore-btn:hover {
+  background-color: #16a085;
+}
+.blog-section {
+  padding: 60px 20px;
+  background-color: #f8f9fa;
+  text-align: center;
+}
+
+.blog-heading {
+  font-size: 2.5rem;
+  margin-bottom: 40px;
+}
+
+.blog-cards {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.blog-card {
+  background: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+  max-width: 320px;
+  text-align: left;
+}
+
+.blog-card img {
+  width: 100%;
+  height: auto;
+}
+
+.blog-card h3 {
+  font-size: 1.2rem;
+  padding: 15px 20px 5px;
+}
+
+.blog-card p {
+  padding: 0 20px 10px;
+  font-size: 0.95rem;
+  color: #555;
+}
+
+.read-more {
+  display: block;
+  padding: 10px 20px 20px;
+  color: #e67e22;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.read-more:hover {
+  text-decoration: underline;
+}
+
+
+</style>
+
+<section class="hero">
+  <div class="hero-overlay">
+    <div class="hero-content">
+      <h1>Find or List Rental Spaces Effortlessly with RentEra</h1>
+      <p>Rooms, offices, apartments, or shops – all in one place with RentEra.</p>
+
+      <div class="hero-buttons">
+        <a href="{% url 'property' %}" class="primary-btn">Explore Rentals</a>
+      
+      </div>
+    </div>
+
+    <!-- 🎯 Advanced Search Box -->
+  <div class="search-container">
+  <h3>Advance Search</h3>
+  <form method="GET" action="{% url 'property' %}" class="search-form">
+    <div class="form-group">
+      <label for="property_type">Property Type</label>
+      <select name="property_type" id="property_type">
+        <option value="">Any</option>
+        <option value="room">Room</option>
+        <option value="flat and apartment">Flat</option>
+        <option value="office space">Office</option>
+        <option value="hostel">Hostel</option>
+        <option value="house">House</option>
+        <option value="shutters and shops">Shops and Shutters</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="district">District</label>
+      <select name="district" id="district">
+        <option value="">Any</option>
+        <option value="kathmandu">Kathmandu</option>
+        <option value="lalitpur">Lalitpur</option>
+        <option value="bhaktapur">Bhaktapur</option>
+        <option value="morang">Morang</option>
+        <option value="kaski">Kaski</option>
+        <option value="chitwan">Chitwan</option>
+        <option value="sunsari">Sunsari</option>
+        <option value="parsa">Parsa</option>
+      </select>
+    </div>
+
+    <button type="submit">Search</button>
+  </form>
+</div>
+
+  </div>
+</section>
+
+<section class="featured-properties-section">
+  {% if recommended_props %}
+  <h2 class="section-title">Recommendation For You</h2>
+  <div class="carousel-container">
+        <button class="nav-button prev-button" disabled>&#10094;</button>
+
+        <div class="carousel-viewport">
+            <div class="property-row" id="propertyRow">
+                
+                {% for property in recommended_props %}
+                <div class="property-card">
+                    <div class="card-content">
+                        <div class="property-image-container">
+                            <span class="property-tag">{{ property.get_sale_rent_status_display|default:'For Rent' }}</span>
+
+                            {% if property.main_image %}
+                                <img src="{{ property.main_image }}" alt="{{ property.name}}">
+                            {% else %}
+                                <img src="{% static 'images/placeholder.jpg' %}" alt="No image" class="property-image">
+                            {% endif %}
+                        </div>
+                        <div class="property-details">
+                            <div class="feature-tags">
+                                {% for facility in property.facilities.all|slice:":3" %}
+                                    <span class="feature-tag">{{ facility.name }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <p class="property-name">{{ property.name }}</p>
+                            <p class="price">Price:Rs.{{ property.price|floatformat:0 }}</p>
+                            <p class="rooms-line">Number of Rooms: {{ property.rooms|default:1 }}</p>
+                        </div>
+                        <a href="{% url 'propertydetails' slug=property.slug %}" class="view-details-btn">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                {% endfor %}
+            </div>
+        </div>
+
+        <button class="nav-button next-button">&#10095;</button>
+    </div>
+    {% endif %}
+</section>
+
+<section class="featured-properties-section">
+    <h2 class="section-title">Featured Properties</h2>
+    <p class="section-subtitle">A handpicked selection of our best rental listings.</p>
+
+    <div class="filter-buttons">
+        <button 
+            class="filter-btn" 
+            data-property-type="all">
+            <i class="fas fa-th-large"></i> All
+        </button>
+
+        {% for type in property_types %}
+            <button 
+                class="filter-btn {% if type == default_property_type %}active{% endif %}" 
+                data-property-type="{{ type }}">
+                
+                {% if type == 'house' %}<i class="fas fa-home"></i>{% endif %}
+                {% if type == 'flat and apartment' %}<i class="fas fa-building"></i>{% endif %}
+                {% if type == 'office space' %}<i class="fas fa-briefcase"></i>{% endif %}
+                {% if type == 'Flat' %}<i class="fas fa-bed"></i>{% endif %}
+                {% if type == 'Room' %}<i class="fas fa-door-open"></i>{% endif %}
+                {% if type == 'Hostel' %}<i class="fas fa-user-friends"></i>{% endif %}
+                {% if type == 'shutters and shops' %}<i class="fas fa-store"></i>{% endif %}
+                
+                {{ type }}
+            </button>
+        {% endfor %}
+    </div>
+
+    <div class="carousel-container">
+        <button class="nav-button prev-button" disabled>&#10094;</button>
+
+        <div class="carousel-viewport">
+            <div class="property-row" id="propertyRow">
+                
+                {% for property in initial_properties %}
+                <div class="property-card">
+                    <div class="card-content">
+                        <div class="property-image-container">
+                            <span class="property-tag">{{ property.get_sale_rent_status_display|default:'For Rent' }}</span>
+
+                            {% if property.main_image %}
+                                <img src="{{ property.main_image }}" alt="{{ property.name}}">
+                            {% else %}
+                                <img src="{% static 'images/placeholder.jpg' %}" alt="No image" class="property-image">
+                            {% endif %}
+                        </div>
+                        <div class="property-details">
+                            <div class="feature-tags">
+                                {% for facility in property.facilities.all|slice:":3" %}
+                                    <span class="feature-tag">{{ facility.name }}</span>
+                                {% endfor %}
+                            </div>
+                            
+                            <p class="property-name">{{ property.name }}</p>
+                            <p class="price">Price:Rs.{{ property.price|floatformat:0 }}</p>
+                            <p class="rooms-line">Number of Rooms: {{ property.rooms|default:1 }}</p>
+                        </div>
+                        <a href="{% url 'propertydetails' slug=property.slug %}" class="view-details-btn">
+                            View Details
+                        </a>
+                    </div>
+                </div>
+                {% empty %}
+                    <p class="loading-text">No featured properties of this type are available right now.</p>
+                {% endfor %}
+            </div>
+        </div>
+
+        <button class="nav-button next-button">&#10095;</button>
+    </div>
+</section>
+<section class="how-it-works">
+  <div class="container">
+    <h2>How Rentera Works</h2>
+    <p class="subtitle">Just three easy steps to find or list your perfect rental space.</p>
+
+    <div class="steps">
+      <div class="step">
+        <div class="icon"><i class="fas fa-search"></i></div>
+        <h3>Search or List</h3>
+        <p>Browse rental properties or list your own space with just a few clicks.</p>
+      </div>
+      <div class="step">
+        <div class="icon"><i class="fas fa-handshake"></i></div>
+        <h3>Connect Securely</h3>
+        <p>Reach out to verified users and communicate safely through the platform.</p>
+      </div>
+      <div class="step">
+        <div class="icon"><i class="fas fa-file-signature"></i></div>
+        <h3>Rent Hassle-Free</h3>
+        <p>Finalize the rental process smoothly with secure payments and support.</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="testimonials">
+  <div class="container">
+    <h2>What Our Users Say</h2>
+    <p class="subtitle">Real experiences from renters and property owners on Rentera.</p>
+
+    <div class="testimonial-cards">
+      <!-- Testimonial 1 -->
+      <div class="testimonial-card">
+        <div class="avatar">
+          <img src="https://randomuser.me/api/portraits/women/65.jpg" alt="Sita Sharma" />
+        </div>
+        <h3>Sita Sharma</h3>
+        <p class="role">Tenant</p>
+        <div class="stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star-half-alt"></i>
+        </div>
+        <p class="quote">“Rentera made finding my apartment so easy and secure. Highly recommended!”</p>
+      </div>
+
+      <!-- Testimonial 2 -->
+      <div class="testimonial-card">
+        <div class="avatar">
+          <img src="https://randomuser.me/api/portraits/men/43.jpg" alt="Raj Kumar" />
+        </div>
+        <h3>Raj Kumar</h3>
+        <p class="role">Property Owner</p>
+        <div class="stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="quote">“Listing my shop on Rentera helped me find reliable tenants quickly.”</p>
+      </div>
+
+      <!-- Testimonial 3 -->
+      <div class="testimonial-card">
+        <div class="avatar">
+          <img src="https://randomuser.me/api/portraits/women/29.jpg" alt="Anita Basnet" />
+        </div>
+        <h3>Anita Basnet</h3>
+        <p class="role">Tenant</p>
+        <div class="stars">
+          <i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i><i class="fas fa-star"></i>
+        </div>
+        <p class="quote">“The platform’s support team was so helpful during my rental process.”</p>
+      </div>
+    </div>
+  </div>
+</section>
+<section class="faq-section">
+  <div class="container">
+    <h2>Frequently Asked Questions</h2>
+    <p class="subtitle">Got questions? We’ve got answers.</p>
+
+    <div class="faq-list">
+      <div class="faq-item">
+        <button class="faq-question">
+          How do I list my property on Rentera?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>To list your property, sign up as a proprietor, navigate to the listing page, and fill out the required details along with images. Once submitted, your listing will be reviewed and published.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Are the property listings verified?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Yes, we verify each listing through owner confirmation and occasional site visits to ensure accuracy and safety for renters.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          Is Rentera free to use?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>Renters can browse and contact owners for free. Proprietors pay a small listing fee to keep the platform sustainable and secure.</p>
+        </div>
+      </div>
+
+      <div class="faq-item">
+        <button class="faq-question">
+          What payment options are supported?
+          <span class="faq-toggle">+</span>
+        </button>
+        <div class="faq-answer">
+          <p>We support various payment options including bank transfers, mobile wallets, and secure online payment gateways.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="blog-section">
+  <div class="blog-container">
+    <h2 class="blog-heading">Latest Insights & Tips</h2>
+    <div class="blog-cards">
+      <div class="blog-card">
+        <img src="{% static 'assets/images/blog1.jpg' %}" alt="Blog 1">
+        <h3>How to Rent Out Your Property Hassle-Free</h3>
+        <p>Follow these simple steps to safely and easily list your property with maximum visibility.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+      <div class="blog-card">
+        <img src="{% static 'assets/images/blog2.jpg' %}" alt="Blog 2">
+        <h3>Top Neighborhoods for Renting in 2025</h3>
+        <p>Discover the best places to live in your city — based on affordability, safety, and comfort.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+      <div class="blog-card">
+        <img src="{% static 'assets/images/blog3.jpg' %}" alt="Blog 3">
+        <h3>Tips for First-Time Renters</h3>
+        <p>New to renting? Here's a quick guide to help you navigate the process like a pro.</p>
+        <a href="#" class="read-more">Read More →</a>
+      </div>
+  </div>
+</section>
+
+<section class="trust-section">
+  <div class="container">
+    <h2 class="section-heading">Trusted by Thousands</h2>
+    <p class="section-subtitle">We're proud to connect property owners and tenants across Nepal.</p>
+
+    <div class="trust-stats">
+      <div class="stat-card">
+        <h3>5,000+</h3>
+        <p>Properties Listed</p>
+      </div>
+      <div class="stat-card">
+        <h3>3,000+</h3>
+        <p>Verified Landlords</p>
+      </div>
+      <div class="stat-card">
+        <h3>25+</h3>
+        <p>Cities Covered</p>
+      </div>
+      <div class="stat-card">
+        <h3>10,000+</h3>
+        <p>Happy Renters</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+
+    const propertyRow = document.getElementById('propertyRow');
+    const prevButton = document.querySelector('.prev-button');
+    const nextButton = document.querySelector('.next-button');
+    const filterButtons = document.querySelectorAll('.filter-btn');
+    
+    // --- Global constants ---
+    const PLACEHOLDER_IMG = "{% static 'images/placeholder.jpg' %}";
+    // IMPORTANT: Make sure this base URL is correct for your project
+    const PROPERTY_DETAIL_URL_BASE = "/propertydetails/"; 
+
+    // --- Carousel State ---
+    let currentSlide = 0;
+    let cardsPerView = getCardsPerView();
+    let totalSlides = 0;
+
+    function getCardsPerView() {
+        if (window.innerWidth <= 768) return 1;
+        if (window.innerWidth <= 992) return 2;
+        return 3;
+    }
+
+    function initializeCarousel() {
+        currentSlide = 0;
+        cardsPerView = getCardsPerView();
+        const cards = propertyRow.querySelectorAll('.property-card');
+        const totalCards = cards.length;
+        
+        totalSlides = Math.ceil(totalCards / cardsPerView);
+
+        propertyRow.style.transform = `translateX(0%)`;
+        updateNavButtons();
+    }
+
+    function slideCarousel(direction) {
+        currentSlide += direction;
+
+        if (currentSlide < 0) currentSlide = 0;
+        if (currentSlide >= totalSlides) currentSlide = totalSlides - 1;
+
+        const translateValue = -currentSlide * 100;
+        propertyRow.style.transform = `translateX(${translateValue}%)`;
+
+        updateNavButtons();
+    }
+
+    function updateNavButtons() {
+        const totalCards = propertyRow.querySelectorAll('.property-card').length;
+        prevButton.disabled = (currentSlide === 0);
+        nextButton.disabled = (currentSlide >= totalSlides - 1) || (totalCards <= cardsPerView);
+    }
+
+    /**
+     * Builds an HTML string for a single property card from AJAX JSON data.
+     */
+    function buildPropertyCardHTML(property) {
+        const imageUrl = property.image_url ? property.image_url : PLACEHOLDER_IMG;
+        // Construct the correct URL using the base and the slug
+        const detailUrl = `${PROPERTY_DETAIL_URL_BASE}${property.slug}/`;
+
+        let facilityTagsHTML = '';
+        if (property.facilities && property.facilities.length > 0) {
+            property.facilities.slice(0, 3).forEach(facilityName => {
+                facilityTagsHTML += `<span class="feature-tag">${facilityName}</span>`;
+            });
+        }
+
+        // NOTE: The price is already formatted with commas from the Django view
+        return `
+        <div class="property-card">
+            <div class="card-content">
+                <div class="property-image-container">
+                    <span class="property-tag">${property.sale_rent_status || 'For Rent'}</span>
+                    <img src="${imageUrl}" alt="${property.name}" class="property-image">
+                </div>
+                <div class="property-details">
+                    <div class="feature-tags">
+                        ${facilityTagsHTML}
+                    </div>
+                    <p class="property-name">${property.name}</p>
+                    <p class="price">Price:Rs.${property.price}</p>
+                    <p class="rooms-line">Number of Rooms: ${property.rooms}</p>
+                </div>
+                <a href="${detailUrl}" class="view-details-btn">
+                    View Details
+                </a>
+            </div>
+        </div>
+        `;
+    }
+    // --- Event Listeners ---
+
+    prevButton.addEventListener('click', () => slideCarousel(-1));
+    nextButton.addEventListener('click', () => slideCarousel(1));
+
+    filterButtons.forEach(button => {
+        button.addEventListener('click', async () => {
+            filterButtons.forEach(btn => btn.classList.remove('active'));
+            button.classList.add('active');
+
+            const propertyType = button.dataset.propertyType;
+            
+            propertyRow.innerHTML = '<p class="loading-text">Loading...</p>';
+
+            // --- THIS IS THE CORRECTED LOGIC ---
+            // 1. Define the base URL for your AJAX endpoint
+            let fetchUrl = '/ajax/get-featured-properties/';
+
+            // 2. Only add the ?type= parameter if the button is NOT 'all'
+            if (propertyType !== 'all') {
+                fetchUrl += `?type=${propertyType}`;
+            }
+            // If propertyType IS 'all', the URL stays '/ajax/get-featured-properties/'
+            // Your backend must be set up to return ALL properties when no type is given.
+            
+            try {
+                // 3. Use the new fetchUrl variable
+                const response = await fetch(fetchUrl);
+                if (!response.ok) {
+                    // Give a more specific error in the console
+                    throw new Error(`Network response was not ok. Status: ${response.status}`);
+                }
+                
+                const data = await response.json();
+                
+                propertyRow.innerHTML = '';
+                
+                if (data.properties && data.properties.length > 0) {
+                    data.properties.forEach(prop => {
+                        propertyRow.innerHTML += buildPropertyCardHTML(prop);
+                    });
+                } else {
+                    propertyRow.innerHTML = '<p class="loading-text">No featured properties of this type are available.</p>';
+                }
+                
+                initializeCarousel();
+
+            } catch (error) {
+                console.error('Error fetching properties:', error);
+                propertyRow.innerHTML = '<p class="loading-text">Failed to load properties. Please try again.</p>';
+                initializeCarousel();
+            }
+        });
+    });
+    
+    window.addEventListener('resize', initializeCarousel);
+
+    // --- Initial Call ---
+    initializeCarousel();
+});
+</script>
+
+
+
+
+{% endblock content  %}
+

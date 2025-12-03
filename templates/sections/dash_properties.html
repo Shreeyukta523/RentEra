@@ -1,0 +1,71 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/profile.css' %}" />
+
+<div class="dashboard-header">Your Properties</div>
+
+<div class="top-controls">
+  <a href="{% url 'addproperty' %}" class="add-property-btn">+ Add Property</a>
+
+  <form role="search" class="search-box" method="GET" action="{% url 'proprietordashboard' %}">
+    <input type="search" placeholder="Search Here...." name="q" value="{{ query|default_if_none:'' }}" />
+    <button type="submit"></button>
+  </form>
+</div>
+
+<div style="display:flex; flex-grow: 1;">
+  <section class="properties-scroll" style="flex-grow:1; max-height:590px; overflow-y:auto;">
+    <div class="properties-area">
+
+      {% for p in properties %}
+      <a href="{% url 'propertydetails' p.slug %}" class="property-link">
+        <article class="property-card" tabindex="0">
+          <div class="image-container">
+
+            {% if p.main_image %}
+              <img src="{{ p.main_image }}" alt="{{ p.name }} image" class="property-image">
+            {% endif %}
+
+            <button class="delete-btn"
+              onclick="event.stopPropagation(); event.preventDefault(); showDeleteConfirm('{{ p.slug }}', '{{ p.name }}')">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+
+          <h3 class="property-title">{{ p.name }}</h3>
+          <div class="property-price">Rs.{{ p.price }}</div>
+
+          <div class="property-location">
+            <img src="{% static 'assets/images/icons/loc.svg' %}" alt="Location Icon"
+                 class="location-icon" style="width: 15px; height: 15px;" />
+            {{ p.address }}
+          </div>
+
+        </article>
+      </a>
+
+      {% empty %}
+        <p class="no-properties">You haven’t listed any properties yet.</p>
+      {% endfor %}
+
+      <!-- “Add New” card -->
+      <a href="{% url 'addproperty' %}">
+        <article class="add-property-card" tabindex="0">
+          <div class="add-property-inner">+ Add New</div>
+        </article>
+      </a>
+
+    </div>
+  </section>
+</div>
+
+<!-- Delete Confirmation Modal (OUTSIDE LOOP) -->
+<div id="delete-confirm-modal" class="delete-modal" style="display:none;">
+  <div class="delete-modal-content">
+    <p id="delete-message"></p>
+    <div class="delete-actions">
+      <button onclick="confirmDelete()" class="confirm-delete">Yes</button>
+      <button onclick="closeDeleteModal()" class="cancel-delete">No</button>
+    </div>
+  </div>
+</div>

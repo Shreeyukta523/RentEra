@@ -1,0 +1,99 @@
+<style>
+    .notif-card {
+        border: none;
+        border-radius: 16px;
+        padding: 20px;
+        transition: 0.25s ease;
+        background: #ffffff;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+    }
+    .notif-card:hover {
+        box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    }
+    .notif-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        margin-bottom: 8px;
+        color: #333;
+    }
+    .notif-date {
+        font-size: 0.85rem;
+        color: #888;
+    }
+    .notif-status {
+        font-size: 0.9rem;
+        margin-bottom: 15px;
+    }
+    .notif-btn {
+        border-radius: 10px !important;
+        padding: 6px 14px !important;
+        font-size: 0.85rem !important;
+    }
+
+</style>
+
+<div class="container mt-1">
+
+    <h2 class="text-center mb-4 fw-bold">Notifications</h2>
+
+
+    {% if received_requests %}
+        <div class="d-flex flex-column gap-3">
+            {% for req in received_requests %}
+                <div class="notif-card">
+
+                    <div class="d-flex justify-content-between">
+                        <div class="notif-title">
+                            {{ req.renter.user.username }} requested for <span class="text-primary">{{ req.property.name }}</span>
+                        </div>
+                        <div class="notif-date">{{ req.created_at|date:"M d, Y · H:i" }}</div>
+                    </div>
+
+                    <div class="notif-status">
+                        <strong>Status:</strong>
+                        {% if req.status == 'pending' %}
+                            <span class="badge bg-warning text-dark">Pending</span>
+                        {% elif req.status == 'accepted' %}
+                            <span class="badge bg-success">Accepted</span>
+                        {% elif req.status == 'rejected' %}
+                            <span class="badge bg-danger">Rejected</span>
+                        {% elif req.status == 'cancelled' %}
+                            <span class="badge bg-secondary">Cancelled</span>
+                        {% endif %}
+                    </div>
+
+                    <div class="d-flex flex-wrap gap-2">
+
+                        {% if req.status == 'pending' %}
+                            <form action="{% url 'manage_request' req.id 'accept' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="?section=notifications">
+                                <button type="submit" class="btn btn-success notif-btn">Accept</button>
+                            </form>
+
+                            <form action="{% url 'manage_request' req.id 'reject' %}" method="post">
+                                {% csrf_token %}
+                                <input type="hidden" name="next" value="?section=notifications">
+                                <button type="submit" class="btn btn-danger notif-btn">Reject</button>
+                            </form>
+
+                        {% elif req.status == 'accepted' %}
+                            <span class="text-success small">You can now contact {{ req.renter.user.username }}.</span>
+
+                            <a href="{% url 'chat' req.id %}" class="btn btn-outline-primary notif-btn">Chat</a>
+                        {% endif %}
+
+                        <a href="{% url 'propertydetails' req.property.slug %}" class="btn btn-primary notif-btn">Property</a>
+
+                        <a href="{% url 'renter_details' req.id %}" class="btn btn-info notif-btn text-white">
+                            Renter Info
+                        </a>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <p class="text-muted">You have not received any property requests yet.</p>
+    {% endif %}
+</div>

@@ -1,0 +1,1186 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block content %}
+<link rel="stylesheet" href="{% static 'assets/css/globals.css' %}">
+{% comment %} <link rel="stylesheet" href="{% static 'assets/css/myprofile.css' %}">
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}"> {% endcomment %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap');
+
+/* CSS Variables for better consistency and theming */
+:root {
+  --color-dark-bg: #1d1d1d;
+  --color-text-light: #999;
+  --color-text-dark: #222;
+  --color-white: #fff;
+  --color-main-bg: #8080801a; /* Slightly lighter than original for background, close to the image */
+  --color-sidebar-active-bg: #000;
+  --color-sidebar-hover-bg: #444;
+  --color-primary-orange: #e14c25; /* Used for property price, add button, search icon */
+  --color-secondary-blue: #007fff; /* Used for navbar active border */
+  --color-green: #00cc9c; /* Used for notifications count, sidebar active border, profile border */
+  --color-red: #ff5920; /* Used for inbox count (changed from #e62216 to match original inbox color), logout */
+  --color-blue-requests: #1361e9; /* Used for requests count */
+  --color-gray-light: #eee;
+  --color-gray-medium: #bbb;
+  --color-gray-dark: #666;
+  --color-gray-translucent: rgba(153, 153, 153, 0.5); /* For dotted border */
+  --color-sidebar-border: rgba(255, 255, 255, 0.1); /* For sidebar footer separator */
+
+  --border-radius-card: 14px;
+  --border-radius-button: 20px;
+  --border-radius-search: 28px;
+  --border-radius-sidebar-item: 8px;
+
+  --box-shadow-light: 0 0 8px rgb(0 0 0 / 0.1);
+  --box-shadow-card-hover: 0 0 20px #ff7b52a6;
+  --box-shadow-button: 0 4px 8px rgb(255 71 39 / 0.3);
+}
+
+/* Base Styles */
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: 'Poppins', sans-serif;
+  background-color: var(--color-main-bg); /* Use variable */
+  color: var(--color-text-dark); /* Use variable */
+}
+
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* Container for entire layout */
+.dashboard{
+    display: flex; /* This is the key: arranges children side-by-side */
+    min-height: 100vh; /* Make the container at least the full viewport height */
+    /* You might want to adjust padding or max-width for the overall layout */
+    padding: 20px; /* Example padding around the entire layout */
+    box-sizing: border-box; /* Include padding in element's total width and height */
+    align-items: flex-start; /* Aligns items to the start of the cross-axis (top) */
+    gap: 20px; /* Adds space between the sidebar and main content */
+}
+
+
+/* Sidebar */
+.sidebar {
+  background-color: var(--color-dark-bg); /* Use variable */
+  width: 250px;
+  flex-shrink: 0;
+  display: flex;
+  top: 50px;
+  flex-direction: column;
+  padding: 28px 32px 50px 20px;
+
+  color: var(--color-text-light); /* Use variable */
+  border-radius: var(--border-radius-card) 0 0 var(--border-radius-card); /* Use variable */
+  box-shadow: var(--box-shadow-light); /* Added shadow for better visual separation from background */
+}
+
+
+
+/* Profile */
+.profile {
+  text-align: center;
+  margin-bottom: 50px;
+  color: var(--color-white); /* Use variable */
+}
+
+.profile-img {
+  width: 96px;
+  height: 96px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin: 0 auto 14px auto;
+  border: 3px solid var(--color-green); /* Used green for border as per image */
+  cursor:pointer;
+}
+
+.profile-name {
+  font-weight: 600;
+  font-size: 18px;
+  margin-bottom: 4px;
+}
+
+.profile-role {
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--color-gray-dark); /* Use variable for clarity */
+}
+
+/* Sidebar nav */
+.nav-links {
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  font-size: 15px;
+}
+
+
+.nav-links a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 18px;
+  color: var(--color-gray-dark); /* Use variable */
+  border-radius: var(--border-radius-sidebar-item); /* Use variable */
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  user-select: none;
+  line-height: 1.2;
+}
+
+.nav-links a:hover:not(.active) {
+  background-color: var(--color-sidebar-hover-bg); /* Use variable */
+  color: var(--color-primary-orange); 
+
+}
+
+.nav-links a.active {
+  background-color: black; 
+  border-left: 3px solid var(--color-primary-orange);
+  color: var(--color-white);
+  font-weight: 600;
+
+}
+
+
+
+.nav-icon {
+  display: inline-flex;
+  font-size: 18px;
+  width: 18px;
+  height: 18px;
+}
+
+ .nav-icon img.icon {
+    width: 18px;
+    height: 18px;
+   }
+
+
+
+
+.count-inbox {
+  background: var(--color-red); /* Use variable */
+}
+.count-requests {
+  background: var(--color-blue-requests); /* Use variable */
+}
+.count-notifications {
+  background: var(--color-green); /* Use variable */
+}
+
+/* Bottom links & logout */
+.sidebar-footer {
+  font-size: 14px;
+  margin-top: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding-top: 20px; /* Added padding to separate from main nav */
+  border-top: 1px solid var(--color-sidebar-border); /* Subtle separator */
+}
+
+.sidebar-footer a {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--color-gray-dark); /* Use variable */
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+.sidebar-footer a:hover {
+  color: var(--color-primary-orange); /* Use primary orange on hover for consistency */
+}
+
+.logout {
+  color: var(--color-red); /* Use variable */
+  font-weight: 600;
+}
+.logout:hover {
+  color: #ff3322; /* Slightly darker red on hover */
+}
+
+/* Main area */
+.main {
+  flex-grow: 1;
+  background-color: var(--color-white); /* Use variable */
+  /* margin: 30px 30px 30px 20px; Adjusted left margin to match gap, keeping right margin for overall layout */
+  border-radius: var(--border-radius-card); /* Use variable */
+  box-shadow: var(--box-shadow-light); /* Use variable */
+  /* padding: 28px 32px 32px 32px; */
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+/* Navbar at top of main */
+.navbar {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  gap: 32px;
+  font-size: 14px;
+  font-weight: 400;
+}
+
+.navbar a {
+  color: var(--color-gray-dark); /* Use variable */
+  cursor: pointer;
+  position: relative;
+  padding-bottom: 4px; /* Added for consistent spacing when active */
+}
+
+.navbar a:hover {
+  color: var(--color-primary-orange); /* Use variable */
+}
+
+.navbar a.active {
+  border-bottom: 2px solid var(--color-secondary-blue); /* Use variable */
+  padding-bottom: 4px;
+  color: var(--color-text-dark); /* Use variable */
+  font-weight: 600;
+}
+
+/* Dropdown arrow */
+.navbar .dropdown {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.navbar .dropdown svg {
+  width: 12px;
+  height: 12px;
+  stroke: var(--color-gray-dark); /* Use variable */
+  stroke-width: 2;
+}
+
+/* Dashboard header area */
+.dashboard-header {
+  margin-top: 24px;
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--color-primary-orange); /* Use variable */
+  user-select: none;
+}
+/* New: Wrapper for all content sections */
+.content-sections-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 20px; /* Spacing between sections */
+    flex-grow: 1; /* Allow this wrapper to take available space */
+}
+
+/* New: Card style for each section (Personal Details, Contact, etc.) */
+.section-card {
+    background-color: var(--color-white);
+    border-radius: var(--border-radius-card);
+    box-shadow: var(--box-shadow-light);
+    padding: 20px;
+    border: 1px solid var(--color-gray-light); /* Subtle border */
+}
+
+/* New: Header for each section card */
+.section-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+/* New: Section title within each card */
+.section-title {
+    font-size: 18px;
+    font-weight: 600;
+    color: var(--color-primary-orange); /* Using orange for section titles */
+    margin: 0; /* Remove default margin */
+}
+
+/* New: Edit button within section header */
+.edit-button {
+    background-color: var(--color-primary-orange);
+    color: var(--color-white);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius-button);
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 14.5px;
+    box-shadow: var(--box-shadow-button);
+    transition: background-color 0.3s ease;
+}
+
+.edit-button:hover {
+    background-color: #ff6a3a;
+}
+
+/* New: Grid for details (e.g., Personal Details) */
+.details-grid {
+    display: grid;
+    grid-template-columns: 1fr; /* Default to single column */
+    gap: 20px;
+}
+
+@media (min-width: 768px) { /* Adjust for larger screens */
+    .details-grid {
+        grid-template-columns: 150px 1fr; /* Image column and details column */
+        align-items: flex-start;
+    }
+}
+
+
+/* New: Columns for details (e.g., Contact Details) */
+.details-columns {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+@media (min-width: 768px) {
+    .details-columns {
+        flex-direction: row; /* Two columns on larger screens */
+        flex-wrap: wrap;
+        gap: 20px;
+    }
+    .details-columns .detail-group {
+        flex: 1 1 calc(50% - 10px); /* Two items per row with gap */
+    }
+}
+
+
+/* New: Group for a single detail (label + value) */
+.detail-group {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.detail-label {
+    font-size: 13px;
+    font-weight: 400;
+    color: var(--color-gray-dark);
+}
+
+.detail-value {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+}
+
+/* New: Profile Picture Card specific styling */
+.profile-picture-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 30px;
+    position: relative; /* For positioning the edit icon */
+}
+
+.profile-picture-card .user-main-photo {
+    width: 150px; /* Larger size for main profile photo */
+    height: 200px;
+    /* border-radius: 50%; */
+    object-fit: cover;
+    border: 3px solid var(--color-green);
+    cursor: pointer;
+    transition: transform 0.2s ease-in-out;
+}
+
+.profile-picture-card .user-main-photo:hover {
+    transform: scale(1.05);
+}
+
+.edit-icon {
+    position: absolute;
+    bottom: 15px; /* Adjust as needed */
+    right: 15px; /* Adjust as needed */
+    background-color: var(--color-primary-orange);
+    border-radius: 50%;
+    padding: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    box-shadow: var(--box-shadow-button);
+    transition: background-color 0.3s ease;
+}
+
+.edit-icon:hover {
+    background-color: #ff6a3a;
+}
+
+.edit-icon img {
+    width: 18px;
+    height: 18px;
+    filter: invert(100%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(200%) contrast(100%); /* Make icon white */
+}
+
+
+.verification-photo-button {
+    background-color: var(--color-secondary-blue); /* Different color for this button */
+    color: var(--color-white);
+    font-weight: 600;
+    border: none;
+    border-radius: var(--border-radius-button);
+    padding: 8px 15px;
+    cursor: pointer;
+    font-size: 13px;
+    box-shadow: 0 4px 8px rgba(0, 127, 255, 0.3);
+    transition: background-color 0.3s ease;
+}
+
+.verification-photo-button:hover {
+    background-color: #0069d9;
+}
+
+/* New: Citizenship Picture Card specific styling */
+.citizenship-picture-card {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%; /* Take full width of its container */
+    max-width: 300px; /* Max width for the image */
+    margin: 0 auto; /* Center the image */
+}
+
+.citizenship-picture-card .user-main-photo {
+    width: 100%;
+    height: auto;
+    border-radius: var(--border-radius-card); /* Rounded corners for document image */
+    object-fit: cover;
+    border: 1px solid var(--color-gray-medium);
+}
+
+/* New: Document dropdown wrapper */
+.document-dropdown-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.document-display {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    padding: 10px 0;
+    /* border-bottom: 1px solid var(--color-gray-light); / / Optional separator */
+}
+
+.document-name {
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    flex-grow: 1;
+}
+
+.dropdown-arrow {
+    width: 16px;
+    height: 16px;
+    filter: invert(50%) sepia(0%) saturate(0%) hue-rotate(0deg) brightness(50%) contrast(100%); /* Make arrow darker */
+}
+
+
+
+ 
+
+/* Alert Message Pop-up */
+#alert-container {
+    position: fixed;
+    top: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 1000;
+    width: 100%;
+    max-width: 400px;
+    padding: 0 10px;
+}
+
+.alert {
+    background-color: #d4edda;
+    color: #155724;
+    border: 1px solid #c3e6cb;
+    border-radius: 5px;
+    padding: 15px;
+    margin-bottom: 20px;
+    text-align: center;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    opacity: 0;
+    transition: opacity 0.5s ease-in-out;
+}
+
+.alert.visible {
+    opacity: 1;
+}
+/* Add this to the end of your profile.css file */
+
+/* Button Color Fix */
+
+/* Base styles for the Save button */
+.top-controls .save-button {
+    background-color: var(--primary-color,  #ff6a3a);
+    color: white;
+    border: 1px solid var(--primary-color,  #ff6a3a);
+    padding: 8px 16px;
+    font-size: 14px;
+    font-weight: 600;
+    border-radius: 20px; /* This creates the rounded corners */
+    text-decoration: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+/* Hover and active states for the Save button to create the pop-out effect */
+.top-controls .save-button:hover,
+.top-controls .save-button:active {
+    transform: translateY(-2px); /* Moves the button up slightly */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Adds a shadow for the pop-out effect */
+}
+
+
+.input-edit input {
+    width: 100%;
+    box-sizing: border-box;
+    padding: 5px 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+}
+
+
+
+
+/* By default, hide all edit-mode input fields.
+ * This rule is very specific to ensure it is not overridden.*/
+#profile-edit-form .input-edit {
+    display: none !important;
+}
+
+/*
+ * When the form has the 'edit-mode' class,
+ * hide the view-mode text and show the edit-mode input fields.
+ */
+#profile-edit-form.edit-mode .view-mode {
+    display: none !important;
+}
+
+#profile-edit-form.edit-mode .input-edit {
+    display: block !important; /* Use 'block' to ensure it takes its own line */
+}
+
+
+
+/* Controls: Add property & Search */
+.top-controls {
+  margin-top: 26px; /* Adjusted margin-top to separate from header */
+  margin-bottom: 26px;
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  flex-wrap: wrap; /* Allow wrapping on smaller screens */
+  gap: 15px; /* Add gap for wrapped items */
+}
+
+/* Add property button */
+.add-property-btn {
+  background-color: var(--color-primary-orange); /* Use variable */
+  color: var(--color-white); /* Use variable */
+  font-weight: 600;
+  border: none;
+  border-radius: var(--border-radius-button); /* Use variable */
+  padding: 8px 15px;
+  cursor: pointer;
+  font-size: 14.5px;
+
+  align-items: center;
+  gap: 8px;
+  box-shadow: var(--box-shadow-button); /* Use variable */
+  user-select: none;
+  transition: background-color 0.3s ease;
+}
+
+.add-property-btn:hover {
+  background-color: #ff6a3a; /* Slightly darker orange on hover */
+}
+
+.btn-plus {
+  font-weight: 700;
+  font-size: 20px;
+  line-height: 14px;
+  user-select: none;
+}
+
+.search-box {
+  display: flex;
+  align-items: center;
+  background-color: #fff;
+  border: 1px solid var(--color-gray-medium);
+  border-radius: var(--border-radius-search);
+  padding: 8px 15px;
+  gap: 0px;
+
+}
+
+
+ 
+.search-box input[type="search"] {
+  flex-grow: 1;
+  border: none;
+  outline: none;
+  font-size: 14.5px;
+  /* padding: 8px; */
+}
+
+.search-box button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  /* padding-left: 8px; */
+  display: flex;
+  align-items: center;
+}
+
+
+/* Properties grid and add property */
+.properties-area {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 20px;
+}
+
+/* Single property card */
+.property-card {
+  border-radius: var(--border-radius-card); /* Use variable */
+  box-shadow: 0 0 12px rgb(0 0 0 / 0.07);
+  padding: 14px;
+  background-color: var(--color-white); /* Use variable */
+  transition: box-shadow 0.3s ease;
+}
+.property-card:hover {
+  box-shadow: var(--box-shadow-card-hover); /* Use variable */
+}
+
+.property-image {
+  width: 100%;
+  height: 140px;
+  border-radius: 12px;
+  object-fit: cover;
+  display: block;
+  margin-bottom: 14px;
+}
+
+.property-title {
+  font-weight: 600;
+  font-size: 14.5px;
+  margin-bottom: 6px;
+  color: var(--color-text-dark); /* Ensure consistent color */
+}
+
+.property-price {
+  color: var(--color-primary-orange); /* Use variable */
+  font-weight: 600;
+  margin-bottom: 6px;
+  font-size: 14px;
+}
+
+/* Location row */
+.property-location {
+  font-size: 12px;
+  color: var(--color-text-light); /* Use variable */
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.location-icon {
+  width: 13px;
+  height: 13px;
+  stroke: var(--color-text-light); /* Use variable */
+  stroke-width: 2;
+}
+
+/* Add property card */
+.add-property-card {
+  border: 2px dotted var(--color-gray-translucent); /* Use variable */
+  border-radius: var(--border-radius-card); /* Use variable */
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  color: var(--color-gray-dark); /* Use variable */
+  font-weight: 600;
+  min-height: 140px; /* Ensure it has height similar to image */
+  user-select: none;
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+.add-property-card:hover {
+  background-color: #fcfcfc;
+  border-color: var(--color-primary-orange);
+}
+
+.add-property-inner {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 15px;
+  color: var(--color-primary-orange); /* Use variable */
+}
+
+/* Right side Recent Messages area */
+.recent-messages {
+  margin-left: 30px;
+  flex-shrink: 0;
+  width: 340px;
+  border-radius: var(--border-radius-card); /* Use variable */
+  padding: 18px 20px;
+  border: 1px solid var(--color-gray-light); /* Use variable */
+  font-size: 14px;
+  background: var(--color-white); /* Use variable */
+  display: flex;
+  flex-direction: column;
+  box-shadow: var(--box-shadow-light); /* Added shadow for consistency */
+  max-height: 590px; /* Align max-height with properties-scroll */
+  overflow-y: auto; /* Enable scrolling for messages too */
+}
+.recent-messages-header {
+  font-weight: 600;
+  margin-bottom: 14px;
+  color: var(--color-text-dark); /* Ensure consistent color */
+}
+/* Message entry */
+.message-item {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 8px 0;
+  border-bottom: 1px solid var(--color-gray-light); /* Use variable */
+}
+.message-item:last-child {
+  border-bottom: none;
+}
+.message-avatar {
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+}
+.message-texts {
+  flex-grow: 1;
+}
+.message-name {
+  font-weight: 600;
+  font-size: 14px;
+  margin-bottom: 2px;
+  color: var(--color-text-dark); /* Use variable */
+}
+.message-snippet {
+  font-weight: 300;
+  font-size: 13px;
+  color: var(--color-gray-dark); /* Use variable */
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* Scroll for properties grid */
+.properties-scroll {
+  overflow-y: auto;
+  padding-right: 4px;
+  flex-grow: 1;
+}
+
+/* Custom scroll styles */
+.properties-scroll::-webkit-scrollbar,
+.recent-messages::-webkit-scrollbar { /* Apply scrollbar to messages too */
+  width: 8px;
+}
+.properties-scroll::-webkit-scrollbar-thumb,
+.recent-messages::-webkit-scrollbar-thumb {
+  background-color: var(--color-primary-orange); /* Use variable */
+  border-radius: 10px;
+}
+.properties-scroll::-webkit-scrollbar-track,
+.recent-messages::-webkit-scrollbar-track {
+  background: transparent;
+}
+ 
+
+
+  .image-container {
+    position: relative;
+  }
+
+  .delete-btn {
+    position: absolute;
+    bottom: 8px;
+    right: 8px;
+    background-color: #f35525;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .delete-btn i {
+    font-size: 16px;
+  }
+
+  /* Modal */
+  .delete-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .delete-modal-content {
+    background: white;
+    padding: 20px;
+    border-radius: 8px;
+    text-align: center;
+  }
+
+  .delete-actions {
+    margin-top: 15px;
+  }
+
+  .confirm-delete,
+  .cancel-delete {
+    padding: 8px 16px;
+    margin: 0 8px;
+    border: none;
+    cursor: pointer;
+    border-radius: 6px;
+  }
+
+  .confirm-delete {
+    background-color: #f35525;
+    color: white;
+  }
+
+  .cancel-delete {
+    background-color: #f1f1f1;
+    color: #333;
+  }
+</style>
+
+<div class="dashboard">
+    <aside class="sidebar">
+        <div class="profile">
+            <form id="profile-form" method="POST" enctype="multipart/form-data" action="{% url 'update_profile_image' %}">
+                {% csrf_token %}
+                <label for="id_profile_image">
+                    {% if request.user.userprofile.profile_image and request.user.userprofile.profile_image.url != '/media/profile/default.jpg' %}
+                        <img src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}" alt="Profile Image" class="profile-img" />
+                    {% else %}
+                        <img src="{% static 'assets/images/default.png' %}" alt="Default Profile" class="profile-img" />
+                    {% endif %}
+                </label>
+                <input id="id_profile_image" name="profile_image" type="file" style="display: none;" onchange="document.getElementById('profile-form').submit();" />
+            </form>
+
+            <div class="profile-name">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+            <div class="profile-role">{{ request.user.userprofile.role|capfirst }}</div>
+        </div>
+
+        <nav class="nav-links">
+            <a href="?section=profile" class="{% if section == 'profile' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/dashboard.svg' %}" class="icon" /></span>
+                Dashboard
+            </a>
+
+            <a href="?section=inbox" class="{% if section == 'inbox' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/message.svg' %}" class="icon" /></span>
+                Inbox
+            </a>
+
+            <a href="?section=requests" class="{% if section == 'requests' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/addacc.svg' %}" class="icon" /></span>
+                Requests
+            </a>
+
+            <a href="?section=renter_lists" class="{% if section == 'renter_lists' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/requests.svg' %}" class="icon" /></span>
+                Renter Lists
+            </a>
+
+            <a href="?section=notifications" class="{% if section == 'notifications' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/noti.svg' %}" class="icon" /></span>
+                Notifications
+            </a>
+
+            <a href="?section=properties" class="{% if section == 'properties' %}active{% endif %}">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/map.svg' %}" class="icon" /></span>
+                Properties
+            </a>
+            <a href="?section=backup_properties" class="{% if section == 'backup_properties' %}active{% endif %}">
+              <span class="nav-icon"><img src="{% static 'assets/images/icons/restore.svg' %}" alt="Backup Icon"class="icon" /></span>
+              Restore
+            </a>
+        </nav>
+
+        <div class="sidebar-footer" style="padding-top: 300px;">
+            <a href="#"><span class="nav-icon"><img src="{% static 'assets/images/icons/info.svg' %}" class="icon" /></span> Help & Support</a>
+            <a href="{% url 'logout_confirm' %}" class="logout">
+                <span class="nav-icon"><img src="{% static 'assets/images/icons/log-out.svg' %}" class="icon" /></span> Log Out
+            </a>
+        </div>
+    </aside>
+
+    <main class="main">
+        <div class="content-sections-wrapper">
+
+            {% if section == "profile" %}
+
+            <!-- Hidden form for profile image -->
+            <form id="profile-image-form-main" method="post" action="{% url 'update_profile_image' %}" enctype="multipart/form-data" style="display:none;">
+                {% csrf_token %}
+                <input type="file" name="profile_image" id="profile-image-input-main" accept="image/*" onchange="this.form.submit();">
+            </form>
+
+            <!-- Profile Edit Form -->
+            <form method="POST" action="{% url 'proprietordashboard' %}" id="profile-edit-form" class="view-mode">
+                {% csrf_token %}
+
+                <!-- PERSONAL DETAILS -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Personal Details</h3>
+                        <div class="top-controls">
+                            <button type="button" class="edit-button">Edit</button>
+                            <button type="submit" class="save-button" id="saveBtn" style="display: none;">Save</button>
+                        </div>
+                    </div>
+
+                    <div class="details-grid">
+                        <div class="profile-picture-card">
+                            {% if request.user.userprofile.profile_image %}
+                                <img class="user-main-photo" src="{{ request.user.userprofile.profile_image.url }}?v={{ current_timestamp }}" id="main-profile-photo">
+                            {% else %}
+                                <img class="user-main-photo" src="{% static 'assets/images/default.jpg' %}" id="main-profile-photo">
+                            {% endif %}
+                            <div class="edit-icon" style="cursor: pointer;">
+                                <img src="{% static 'assets/images/icons/editp.svg' %}" alt="Edit Icon" onclick="document.getElementById('profile-image-input-main').click();">
+                            </div>
+                        </div>
+
+                        <div class="details-columns">
+                            <div class="detail-group">
+                                <div class="detail-label">Name</div>
+                                <div class="detail-value">{{ request.user.first_name }} {{ request.user.last_name }}</div>
+                            </div>
+
+                            <div class="detail-group">
+                                <div class="detail-label">Username</div>
+                                <div class="detail-value view-mode">{{ request.user.username }}</div>
+                                <div class="input-edit edit-mode">{{ user_form.username }}</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- CONTACT DETAILS -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Contact Details</h3>
+                    </div>
+
+                    <div class="details-columns">
+                        <div class="detail-group">
+                            <div class="detail-label">Phone Number</div>
+                            <div class="detail-value view-mode">
+                                {% if request.user.userprofile.phone_number %}{{ request.user.userprofile.phone_number }}{% else %}N/A{% endif %}
+                            </div>
+                            <div class="input-edit edit-mode">{{ user_profile_form.phone_number.as_widget }}</div>
+                        </div>
+
+                        <div class="detail-group">
+                            <div class="detail-label">Email</div>
+                            <div class="detail-value">{{ request.user.email }}</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ADDRESS -->
+                <div class="section-card">
+                    <div class="section-header">
+                        <h3 class="section-title">Address</h3>
+                    </div>
+                    <div class="details-columns">
+                        <div class="detail-group">
+                            <div class="detail-label">City</div>
+                            <div class="detail-value view-mode">
+                                {% if request.user.userprofile.address %}{{ request.user.userprofile.address }}{% else %}N/A{% endif %}
+                            </div>
+                            <div class="input-edit edit-mode">{{ user_profile_form.address }}</div>
+                        </div>
+                    </div>
+                </div>
+
+            </form>
+
+            <!-- SUBMITTED DOCUMENT -->
+            <div class="section-card">
+                <h3 class="section-title">Submitted Document</h3>
+
+                <div class="document-dropdown-wrapper">
+                    <div class="document-display">
+                        <div class="citizenship-picture-card">
+                            {% if request.user.userprofile.citizenship_image %}
+                                <img class="user-main-photo" src="{{ request.user.userprofile.citizenship_image.url }}">
+                            {% else %}
+                                <img class="user-main-photo" src="{% static 'assets/images/citizenship.jpg' %}">
+                            {% endif %}
+                        </div>
+
+                        <img class="dropdown-arrow" src="{% static 'assets/images/icons/file-image.svg' %}">
+
+                        <div class="document-name">
+                            {% if request.user.userprofile.citizenship_number %}
+                                Citizenship No: {{ request.user.userprofile.citizenship_number }}
+                            {% else %}
+                                No Citizenship No. Available
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {% endif %}
+
+            {% if section == "inbox" %}
+                {% include "sections/dash_inbox.html" %}
+            {% endif %}
+
+            {% if section == "requests" %}
+                {% include "sections/dash_requests.html" %}
+            {% endif %}
+
+            {% if section == "renter_lists" %}
+                {% include "sections/dash_renter_lists.html" %}
+            {% endif %}
+
+            {% if section == "notifications" %}
+                {% include "sections/dash_noti.html" %}
+            {% endif %}
+
+            {% if section == "properties" %}
+                {% include "sections/dash_properties.html" %}
+            {% endif %}
+            {% if section == "backup_properties" %}
+                {% include "sections/dash_backup_properties.html" %}
+            {% endif %}
+
+
+        </div>
+    </main>
+</div>
+
+
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    const form = document.getElementById('profile-edit-form');
+    const editBtn = document.querySelector('.edit-button');
+    const saveBtn = document.getElementById('saveBtn');
+
+    editBtn.addEventListener('click', function () {
+    // If currently in VIEW mode, switch to EDIT mode
+    if (form.classList.contains('view-mode')) {
+            form.classList.remove('view-mode');
+            form.classList.add('edit-mode');
+            editBtn.style.display = 'none';
+            saveBtn.style.display = 'inline-block';
+        } 
+        // OPTIONAL: If clicking 'Edit' is meant to toggle back to 'View' mode 
+        // (though usually, the Save button handles this in a full application)
+        else {
+            form.classList.remove('edit-mode');
+            form.classList.add('view-mode');
+            editBtn.style.display = 'inline-block';
+            saveBtn.style.display = 'none';
+        }
+     });
+    
+    // NOTE: In a complete implementation, you'd usually add a 'Cancel' button 
+    // that executes the ELSE block above, and the 'Save' button submits the form.
+});
+
+
+let currentSlug = null;
+
+function showDeleteConfirm(slug, name) {
+    currentSlug = slug;
+    document.getElementById('delete-message').innerText =
+        `Are you sure you want to delete "${name}"?`;
+    document.getElementById('delete-confirm-modal').style.display = 'block';
+}
+
+function closeDeleteModal() {
+    document.getElementById('delete-confirm-modal').style.display = 'none';
+    currentSlug = null;
+}
+
+function confirmDelete() {
+    if (currentSlug) {
+        fetch(`/delete-property/${currentSlug}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+            },
+        }).then(response => {
+            if (response.ok) {
+                location.reload();
+            } else {
+                alert("Failed to delete property.");
+                closeDeleteModal();
+            }
+        });
+    }
+}
+
+
+let currentRestoreId = null;
+
+function showRestoreConfirm(backupId, name) {
+    currentRestoreId = backupId;
+
+    document.getElementById('restore-message').innerText =
+        `Are you sure you want to restore "${name}"?`;
+
+    document.getElementById('restore-confirm-modal').style.display = 'block';
+}
+
+function closeRestoreModal() {
+    document.getElementById('restore-confirm-modal').style.display = 'none';
+    currentRestoreId = null;
+}
+
+function confirmRestore() {
+    if (currentRestoreId) {
+        window.location.href = `/restore-property/${currentRestoreId}/`;
+    }
+}
+</script>
+
+{% endblock%}

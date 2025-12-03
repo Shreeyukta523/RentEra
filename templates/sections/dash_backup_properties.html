@@ -1,0 +1,60 @@
+{% load static %}
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/profile.css' %}" />
+
+<div style="display:flex; flex-grow: 1;">
+  <section class="properties-scroll" style="flex-grow:1; max-height:590px; overflow-y:auto;">
+    <div class="properties-area">
+
+      {% for p in backup_properties %}
+      <a href="{% url 'propertydetails' p.slug %}" class="property-link">
+        <article class="property-card" tabindex="0">
+          <div class="image-container">
+
+            {% if p.main_image %}
+              <img src="{{ p.main_image }}" alt="{{ p.name }} image" class="property-image">
+            {% endif %}
+
+            <button class="delete-btn"
+              onclick="event.stopPropagation(); event.preventDefault(); showRestoreConfirm('{{ p.id }}', '{{ p.name }}')">
+              <i class="fas fa-undo"></i>
+            </button>
+          </div>
+
+          <h3 class="property-title">{{ p.name }}</h3>
+          <div class="property-price">Rs.{{ p.price }}</div>
+
+          <div class="property-location">
+            <img src="{% static 'assets/images/icons/loc.svg' %}" alt="Location Icon"
+                 class="location-icon" style="width: 15px; height: 15px;" />
+            {{ p.address }}
+          </div>
+
+        </article>
+      </a>
+
+      {% empty %}
+        <p class="no-properties">You don't have any properties to restore.</p>
+      {% endfor %}
+
+      <!-- “Add New” card -->
+      {% comment %} <a href="{% url 'addproperty' %}">
+        <article class="add-property-card" tabindex="0">
+          <div class="add-property-inner">+ Add New</div>
+        </article>
+      </a> {% endcomment %}
+
+    </div>
+  </section>
+</div>
+
+<!-- Restore Confirmation Modal -->
+  <div id="restore-confirm-modal" class="delete-modal" style="display:none;">
+    <div class="delete-modal-content">
+      <p id="restore-message"></p>
+      <div class="delete-actions">
+        <button onclick="confirmRestore()" class="confirm-delete">Yes</button>
+        <button onclick="closeRestoreModal()" class="cancel-delete">No</button>
+      </div>
+    </div>
+  </div>
