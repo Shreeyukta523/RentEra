@@ -1,56 +1,242 @@
-{# rentals/templates/rentals/renter_details.html #}
 {% extends 'base.html' %}
-{% load static %} {# Load static files for default profile image #}
-
+{% load static %}
 {% block title %}Renter Details{% endblock %}
 
 {% block content %}
-<div class="container mt-5 mb-5">
-    <div class="card shadow-lg border-0">
-        <div class="card-header bg-primary text-white text-center py-3">
-            <h2 class="mb-0">Renter Details</h2>
-            <p class="mb-0 small">For Request ID: {{ request_obj.id }} for Property: "{{ property_obj.name }}"</p>
-        </div>
-        <div class="card-body p-4">
-            <div class="row align-items-center">
-                <div class="col-md-4 text-center mb-3 mb-md-0">
-                    {% if renter_profile.profile_image %}
-                        <img src="{{ renter_profile.profile_image.url }}" class="img-fluid rounded-circle border border-primary p-1" style="width: 150px; height: 150px; object-fit: cover;" alt="Profile Image">
-                    {% else %}
-                        {# Make sure you have a default_profile.png in your static/images folder #}
-                        <img src="{% static 'images/default_profile.png' %}" class="img-fluid rounded-circle border border-primary p-1" style="width: 150px; height: 150px; object-fit: cover;" alt="Default Profile Image">
-                    {% endif %}
-                    <h4 class="mt-3 mb-1">{{ renter_profile.user.username }}</h4>
-                    <p class="text-muted small">Renter Account</p>
-                </div>
-                <div class="col-md-8">
-                    <ul class="list-group list-group-flush">
-                        <li class="list-group-item"><strong>Full Name:</strong> {{ renter_profile.user.first_name }} {{ renter_profile.user.last_name }}</li>
-                        <li class="list-group-item"><strong>Email:</strong> {{ renter_profile.user.email }}</li>
-                        <li class="list-group-item"><strong>Phone Number:</strong> {{ renter_profile.phone_number }}</li>
-                        <li class="list-group-item"><strong>Address:</strong> {% if renter_profile.address %}{{ renter_profile.address }}{% else %}<em class="text-muted">Not provided</em>{% endif %}</li>
-                        <li class="list-group-item"><strong>Citizenship Number:</strong> {% if renter_profile.citizenship_number %}{{ renter_profile.citizenship_number }}{% else %}<em class="text-muted">Not provided</em>{% endif %}</li>
-                        <li class="list-group-item"><strong>Account Verified:</strong>
-                            {% if renter_profile.is_verified %}
-                                <span class="badge bg-success">Yes</span>
-                            {% else %}
-                                <span class="badge bg-danger">No</span>
-                            {% endif %}
-                        </li>
-                        {% if renter_profile.citizenship_image %}
-                            <li class="list-group-item">
-                                <strong>Citizenship Scan:</strong>
-                                <a href="{{ renter_profile.citizenship_image.url }}" target="_blank" class="btn btn-sm btn-outline-primary ms-2">View Scan</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                </div>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+body { background: #fff; min-height: 100vh; padding: 20px; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+
+.details-container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+/* Back Arrow */
+.back-arrow {
+    display: inline-flex; align-items: center; gap: 10px;
+    background: #f35525; color: white;
+    padding: 12px 24px; border-radius: 50px; text-decoration: none; font-weight: 600;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1); transition: all 0.3s ease; margin-bottom: 30px;
+    border: 2px solid transparent;
+}
+.back-arrow:hover { background: #944831ff; transform: translateX(-5px); }
+.back-arrow svg { width: 20px; height: 20px; }
+
+/* Header Card */
+.header-card {
+    background: white; border-radius: 20px; padding: 30px;
+    text-align: center; box-shadow: 0 10px 40px rgba(0,0,0,0.1); margin-bottom: 30px;
+}
+.header-card h1 { color: #f35525; font-size: 2.2rem; font-weight: 700; margin-bottom: 10px; }
+.header-card p { color: #666; font-size: 1.05rem; }
+
+/* Main Flex Grid */
+.content-grid {
+    display: flex; gap: 30px; align-items: flex-start; margin-bottom: 30px;
+}
+.profile-card { flex: 2; background: white; border-radius: 20px; padding: 40px; box-shadow: 0 10px 40px rgba(0,0,0,0.1); text-align: center; }
+.profile-image-wrapper {
+    width: 160px; height: 160px; margin: 0 auto 20px;
+    position: relative; border-radius: 50%; background: linear-gradient(135deg,#f35525,#ff8a65); padding:5px;
+    animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{ box-shadow:0 0 0 0 rgba(243,85,37,0.4);} 50% {box-shadow:0 0 0 20px rgba(243,85,37,0);} }
+.profile-image { width:100%; height:100%; border-radius:50%; object-fit:cover; border:5px solid white; }
+.profile-card h3 { color:#333; font-size:1.6rem; margin-bottom:5px; font-weight:700; }
+.profile-card .role-badge { display:inline-block; background: linear-gradient(135deg,#f35525,#ff8a65); color:white; padding:8px 24px; border-radius:20px; font-size:0.9rem; font-weight:600; margin-bottom: 20px; }
+.info-list { list-style:none; padding:0; text-align:left; margin-top:20px; }
+.info-list li { padding: 15px 20px; border-bottom:1px solid #f0f0f0; display:flex; align-items:center; }
+.info-list strong { color:#f35525; min-width:180px; font-weight:600; font-size:0.95rem; }
+.info-list .value { color:#333; flex:1; font-size:0.95rem; }
+.badge { padding:6px 15px; border-radius:20px; font-size:0.85rem; font-weight:600; }
+.badge-success { background:#10b981; color:white; }
+.badge-danger { background:#ef4444; color:white; }
+
+/* Property Card */
+.property-card { flex: 1; background:white; border-radius:20px; padding:20px; box-shadow:0 10px 30px rgba(0,0,0,0.1); cursor:pointer; transition: all 0.4s ease; overflow:hidden; position:relative; }
+.property-card:hover { transform: translateY(-8px) scale(1.02); box-shadow:0 15px 50px rgba(243,85,37,0.3);}
+.property-card h4 { color:#f35525; font-size:1.3rem; margin-bottom:15px; text-align:center; font-weight:700; }
+.property-image-box { width:100%; height:220px; background:#f5f5f5; border-radius:15px; overflow:hidden; }
+.property-image-box img { width:100%; height:100%; object-fit:cover; transition: transform 0.5s ease; }
+.property-card:hover .property-image-box img { transform: scale(1.1) rotate(2deg); }
+.property-overlay { position:absolute; bottom:0; left:0; right:0; background:linear-gradient(to top, rgba(243,85,37,0.95), rgba(243,85,37,0.7), transparent); color:white; padding:20px; transform:translateY(100%); transition: transform 0.4s ease; }
+.property-card:hover .property-overlay { transform:translateY(0); }
+.property-name { font-size:1.2rem; font-weight:700; margin-bottom:5px; }
+.property-overlay p { font-size:0.9rem; opacity:0.95; }
+
+/* Buttons */
+.action-buttons { display:flex; gap:20px; justify-content:center; margin-top:30px; flex-wrap:wrap;}
+.action-btn { padding:14px 35px; border-radius:50px; font-size:1rem; font-weight:700; text-decoration:none; border:none; cursor:pointer; transition: all 0.3s; text-transform:uppercase; letter-spacing:0.5px;}
+.accept-btn { background:linear-gradient(135deg,#10b981,#059669); color:white; }
+.accept-btn:hover { background:linear-gradient(135deg,#059669,#047857); transform:translateY(-4px) scale(1.05);}
+.reject-btn { background:linear-gradient(135deg,#ef4444,#dc2626); color:white;}
+.reject-btn:hover { background:linear-gradient(135deg,#dc2626,#b91c1c); transform:translateY(-4px) scale(1.05);}
+
+/* Loading overlay */
+.loading-overlay { display:none; position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(5px);}
+.loading-overlay.active { display:flex; }
+.spinner { border:5px solid rgba(255,255,255,0.3); border-top:5px solid white; border-radius:50%; width:50px; height:50px; animation:spin 1s linear infinite;}
+@keyframes spin {0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}
+
+@media(max-width:1024px){.content-grid{flex-direction:column;}.property-image-box{height:200px;}}
+@media(max-width:480px){.profile-image-wrapper{width:120px;height:120px;}}
+</style>
+
+<div class="details-container">
+    <a href="{% url 'proprietordashboard' %}?section=notifications" class="back-arrow">
+        <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"/>
+        </svg>
+        Back to Dashboard
+    </a>
+
+    <div class="header-card">
+        <h1>Renter Details</h1>
+        <p>Request ID: {{ request_obj.id }} for Property: "{{ property_obj.name }}"</p>
+    </div>
+
+    <div class="content-grid">
+        <!-- Profile Card -->
+        <div class="profile-card">
+            <div class="profile-image-wrapper">
+                {% if renter_profile.profile_image %}
+                    <img src="{{ renter_profile.profile_image.url }}" class="profile-image" alt="Profile Image">
+                {% else %}
+                    <img src="{% static 'images/default_profile.png' %}" class="profile-image" alt="Default Profile Image">
+                {% endif %}
             </div>
-            <div class="text-center mt-4">
-                <a href="{% url 'proprietordashboard'  %}?section=notifications" class="btn btn-secondary me-2">Back to Dashboard</a>
-                <a href="{% url 'propertydetails' property_obj.slug %}" class="btn btn-info">View Property</a>
+            <h3>{{ renter_profile.user.username }}</h3>
+            <span class="role-badge">Renter Account</span>
+            <ul class="info-list">
+                <li><strong>Full Name:</strong> <span class="value">{{ renter_profile.user.first_name }} {{ renter_profile.user.last_name }}</span></li>
+                <li><strong>Email:</strong> <span class="value">{{ renter_profile.user.email }}</span></li>
+                <li><strong>Phone:</strong> <span class="value">{{ renter_profile.phone_number|default:"Not provided" }}</span></li>
+                <li><strong>Address:</strong> <span class="value">{% if renter_profile.address %}{{ renter_profile.address }}{% else %}<em>Not provided</em>{% endif %}</span></li>
+                <li><strong>Citizenship Number:</strong> <span class="value">{% if renter_profile.citizenship_number %}{{ renter_profile.citizenship_number }}{% else %}<em>Not provided</em>{% endif %}</span></li>
+                <li><strong>Account Verified:</strong> <span class="value">{% if renter_profile.is_verified %}<span class="badge badge-success">✓ Yes</span>{% else %}<span class="badge badge-danger">✗ No</span>{% endif %}</span></li>
+                {% if renter_profile.citizenship_image %}
+                    <li><strong>Citizenship Scan:</strong> <span class="value"><a href="{{ renter_profile.citizenship_image.url }}" target="_blank" class="view-scan-btn">View Document</a></span></li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <!-- Property Card -->
+        <div class="property-card" onclick="window.location.href='{% url 'propertydetails' property_obj.slug %}'">
+            <h4>Property Details</h4>
+            <div class="property-image-box">
+                {% if property_obj.main_image %}
+                    <img src="{{ property_obj.main_image }}" alt="{{ property_obj.name }}">
+                {% else %}
+                    <div class="empty-property">
+                        <p>No image available</p>
+                    </div>
+                {% endif %}
+            </div>
+            <div class="property-overlay">
+                <div class="property-name">{{ property_obj.name }}</div>
+                <p>🖱️ Click to view full property details</p>
             </div>
         </div>
     </div>
+
+    <!-- Action Buttons -->
+    {% if is_proprietor_owner and request_obj.status == 'pending' %} 
+        <div class="action-buttons"> 
+            <button onclick="acceptRequest()" class="action-btn accept-btn">✓ Accept Request</button> 
+            <button onclick="rejectRequest()" class="action-btn reject-btn">✗ Reject Request</button>
+        </div> 
+    {% elif request_obj.status == 'accepted' %} 
+        <div class="action-buttons"> 
+            <a href="{% url 'chat' request_obj.id %}" class="action-btn accept-btn">💬 Open Chat</a>
+        </div> 
+    {% elif request_obj.status == 'rejected' %} 
+        <div class="header-card" style="background:#fee; margin-top:20px;"> 
+            <p style="color:#dc2626; font-weight:600;">This request has been rejected.</p> 
+        </div> 
+    {% endif %}
+
 </div>
+
+<!-- Loading Overlay -->
+<div class="loading-overlay" id="loadingOverlay">
+    <div class="spinner"></div>
+</div>
+
+<script>
+// --- CORE FIX: Prevent JavaScript re-execution on browser back button ---
+window.addEventListener('pageshow', function(event) {
+    if (event.persisted) {
+        // If the page is loaded from the BFCache (e.g., via back button),
+        // we force a proper reload to get the latest status and avoid script re-execution.
+        window.location.reload(); 
+    }
+});
+// ------------------------------------------------------------------------
+
+
+function acceptRequest() {
+    if (confirm('Accept rental request and start chat?')) {
+        document.getElementById('loadingOverlay').classList.add('active');
+        fetch("{% url 'manage_request' request_obj.id 'accept' %}", {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'X-Requested-With': 'XMLHttpRequest',
+                'Content-Type': 'application/json'
+            }
+        })
+        .then(res => {
+            if (!res.ok) {
+                // If the server returns a non-200, but is still JSON, parse it for message
+                return res.json().then(data => Promise.reject(data.message || 'Server error'));
+            }
+            return res.json();
+        })
+        .then(data => {
+            if (data.success) {
+                // On success, redirect to chat
+                window.location.href = data.chat_url;
+            } else {
+                // Handle logic error (e.g., request already accepted/rejected)
+                alert('Error: ' + (data.message || 'Unknown error'));
+                document.getElementById('loadingOverlay').classList.remove('active');
+            }
+        })
+        .catch(err => {
+            console.error(err);
+            // Show the error from the reject reason if available, otherwise 'Error occurred.'
+            alert('Error occurred: ' + (typeof err === 'string' ? err : 'Please try again.')); 
+            document.getElementById('loadingOverlay').classList.remove('active');
+            // Force a page reload to show the correct status after the attempt.
+            window.location.reload(); 
+        });
+    }
+}
+
+function rejectRequest() {
+    document.getElementById('loadingOverlay').classList.add('active');
+    fetch("{% url 'manage_request' request_obj.id 'reject' %}", {
+        method: 'POST',
+        headers: {
+            'X-CSRFToken': '{{ csrf_token }}',
+            'X-Requested-With': 'XMLHttpRequest',
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ reason: 'No reason provided' })  // default reason
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.success) {
+            window.location.href = "{% url 'proprietordashboard' %}?section=notifications";
+        } else {
+            alert('Error: ' + (data.message || 'Unknown error'));
+            document.getElementById('loadingOverlay').classList.remove('active');
+        }
+    })
+    .catch(err => {
+        console.error(err);
+        alert('Error occurred.');
+        document.getElementById('loadingOverlay').classList.remove('active');
+    });
+}
+
+</script>
 {% endblock %}

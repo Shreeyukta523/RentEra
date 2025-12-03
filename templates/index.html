@@ -273,8 +273,8 @@
 
     /* --- Property Card --- */
     .property-card {
-        flex: 0 0 calc(100% / 3);
-        max-width: calc(100% / 3);
+        flex: 0 0 calc(100% / 4);
+        max-width: calc(100% / 4);
         padding: 15px;
         box-sizing: border-box;
     }
@@ -1061,15 +1061,9 @@
                             {% endif %}
                         </div>
                         <div class="property-details">
-                            <div class="feature-tags">
-                                {% for facility in property.facilities.all|slice:":3" %}
-                                    <span class="feature-tag">{{ facility.name }}</span>
-                                {% endfor %}
-                            </div>
-                            
                             <p class="property-name">{{ property.name }}</p>
                             <p class="price">Price:Rs.{{ property.price|floatformat:0 }}</p>
-                            <p class="rooms-line">Number of Rooms: {{ property.rooms|default:1 }}</p>
+                            <p class="location"> {{ property.address }}, {{ property.province }}</p>
                         </div>
                         <a href="{% url 'propertydetails' slug=property.slug %}" class="view-details-btn">
                             View Details
@@ -1141,8 +1135,8 @@
                             </div>
                             
                             <p class="property-name">{{ property.name }}</p>
-                            <p class="price">Price:Rs.{{ property.price|floatformat:0 }}</p>
-                            <p class="rooms-line">Number of Rooms: {{ property.rooms|default:1 }}</p>
+                            
+                            <p class="location"> {{ property.address }}, {{ property.province }}</p>
                         </div>
                         <a href="{% url 'propertydetails' slug=property.slug %}" class="view-details-btn">
                             View Details

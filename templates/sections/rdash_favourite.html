@@ -1,0 +1,96 @@
+{% load static %}
+
+<style>
+  .image-container {
+    position: relative; /* Add this */
+}
+
+.property-image {
+    display: block;
+    width: 100%;
+    height: auto;
+}
+
+  .delete-btn {
+    position: absolute;
+    bottom: 20px;
+    right: 8px;
+    background-color: #f35525;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  }
+
+  .delete-btn i {
+    font-size: 16px;
+  }
+
+  .delete-btn i {
+    font-size: 16px;
+  }
+
+</style>
+
+<link rel="stylesheet" href="{% static 'assets/css/prop_dashboard.css' %}" />
+<link rel="stylesheet" href="{% static 'assets/css/profile.css' %}" />
+
+<div class="dashboard-header">Your Favourites</div>
+<form id="csrf-form" style="display:none;">
+    {% csrf_token %}
+</form>
+
+<div class="top-controls">
+  <form role="search" class="search-box" method="GET" action="{% url 'myprofile' %}">
+    <input type="search" placeholder="Search Here...." name="q" value="{{ query|default_if_none:'' }}" />
+    <button type="submit"></button>
+  </form>
+</div>
+
+<div style="display:flex; flex-grow: 1;">
+  <section class="properties-scroll" style="flex-grow:1; max-height:590px; overflow-y:auto;">
+    <div class="properties-area">
+
+      {% for p in favourites %}
+      <a href="{% url 'propertydetails' p.property.slug %}" class="property-link">
+      <article class="property-card" tabindex="0">
+          <div class="image-container">
+
+              {% if p.property.main_image %}
+                  <img src="{{ p.property.main_image }}" alt="{{ p.property.name }} image" class="property-image">
+              {% endif %}
+
+              
+          <button class="delete-favourite delete-btn"
+        data-id="{{ p.property.id }}"
+        data-name="{{ p.property.name }}">
+              <i class="fas fa-trash"></i>
+            </button>
+          </div>
+          <h3 class="property-title">{{ p.property.name }}</h3>
+          <div class="property-price">Rs.{{ p.property.price }}</div>
+
+          <div class="property-location">
+              <img src="{% static 'assets/images/icons/loc.svg' %}" alt="Location Icon"
+                  class="location-icon" style="width: 15px; height: 15px;" />
+              {{ p.property.address }}
+          </div>
+
+        </article>
+      </a>
+
+      {% empty %}
+        <p class="no-properties">You haven’t listed any favourites yet.</p>
+      {% endfor %}
+
+    </div>
+  </section>
+</div>
+
+

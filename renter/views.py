@@ -9,21 +9,30 @@ from django.utils import timezone
 from django.db.models import Q
 from .models import UserActivity
 from proprietor.models import Property
+from .models import Favourite
 import re
 
 from decimal import Decimal
+
+from django.shortcuts import render, redirect
+from django.http import JsonResponse
+from django.contrib.auth.decorators import login_required
+from .models import Favourite, Property
+from django.core.exceptions import ObjectDoesNotExist
 
 # Create your views here.
 @renter
 def profile_page(request):
     section = request.GET.get("section", "profile")
+    query = (request.GET.get('q') or "").strip()
     user = request.user
     user_profile = user.userprofile
     current_timestamp = int(time.time())
     inbox = None
     requests = None
-    favourite = None
+    favourites = None
     sent_requets = None
+
     if section == "inbox":
         inbox = Message.objects.filter(sender=request.user)
     
@@ -31,7 +40,16 @@ def profile_page(request):
       requests = Request.objects.filter(owner=request.user)   
 
     elif section == "favourite":
-        favourite =Favourite.objects.filter(owner=request.user)
+        base_qs = Favourite.objects.filter(user_profile=user_profile, property__is_expired=False)
+
+        if query:
+            favourites = base_qs.filter(
+                Q(name__icontains=query) |
+                Q(address__icontains=query)
+            ).order_by("-created_at")
+        else:
+            favourites = base_qs.order_by("-created_at")
+
 
     elif section == "notifications":
         sent_requets = Request.objects.filter(renter=user_profile).order_by('-created_at')     
@@ -59,7 +77,7 @@ def profile_page(request):
         'inbox': inbox,
         'requests': requests,
         'sent_requests': sent_requets,
-        'favourite': favourite,
+        'favourites': favourites,
         'section': section,
     }
     return render(request, 'profile.html', context)
@@ -324,7 +342,73 @@ def get_address_based_recommendations(user):
     scored.sort(key=lambda x: x[1], reverse=True)
     return [p for p, _ in scored[:3]]
 
-def favourite_view(request):
+@renter
+def addtofavourite(request):
+    if request.method == 'POST':
+        prop_id = request.POST.get('property_id')
+
+        try:
+            prop = Property.objects.get(id=prop_id)
+        except Property.DoesNotExist:
+            return JsonResponse({'status': "No such property found"}, status=404)
+
+        # Check if already favourited
+        if Favourite.objects.filter(user_profile=request.user.userprofile, property=prop).exists():
+            return JsonResponse({'status': "Property already in favourites"})
+
+        # Create favourite
+        Favourite.objects.create(user_profile=request.user.userprofile, property=prop)
+        return JsonResponse({'status': "Added to favourites"})
+
+    return JsonResponse({'status': "Invalid request"}, status=400)
 
 
-    return render(request,'favourite.html')
+@renter
+def updatefavourite(request):
+    if request.method == 'POST':
+        prop_id = request.POST.get('property_id')
+
+        try:
+            prop = Property.objects.get(id=prop_id)
+        except Property.DoesNotExist:
+            return JsonResponse({'status': "No such property found"}, status=404)
+
+        fav_item = Favourite.objects.filter(user_profile=request.user.userprofile, property=prop).first()
+
+        if fav_item:
+            fav_item.delete()
+            return JsonResponse({'status': "removed", 'message': "Removed from favourites", 'in_fav': False})
+        else:
+            Favourite.objects.create(user_profile=request.user.userprofile, property=prop)
+            return JsonResponse({'status': "added", 'message': "Added to favourites", 'in_fav': True})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+@renter
+def checkfavourite(request):
+    if request.method == 'GET':
+        prop_id = request.GET.get('property_id')
+
+        try:
+            prop = Property.objects.get(id=prop_id)
+        except Property.DoesNotExist:
+            return JsonResponse({'status': "No such property found"}, status=404)
+
+        in_fav = Favourite.objects.filter(user_profile=request.user.userprofile, property=prop).exists()
+        return JsonResponse({'in_fav': in_fav})
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)
+
+@renter
+def deletefavourite(request):
+    if request.method == 'POST':
+        prop_id = request.POST.get('property_id')
+
+        try:
+            fav_item = Favourite.objects.get(user_profile=request.user.userprofile, property__id=prop_id)
+            fav_item.delete()
+            return JsonResponse({'status': "Deleted Successfully"})
+        except ObjectDoesNotExist:
+            return JsonResponse({'status': "Property does not exist"}, status=404)
+
+    return JsonResponse({'status': 'error', 'message': 'Invalid request'}, status=400)

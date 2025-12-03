@@ -85,15 +85,6 @@ https://templatemo.com/tm-591-villa-agency
               <li><a href="{% url 'home' %}" class="{% if request.path == '/' %}active{% endif %}">Home</a></li>
               <li><a href="{% url 'property' %}"
                   class="{% if request.path == '/property/' %}active{% endif %}">Properties</a></li>
-                  
-              {% if user.is_authenticated and user.userprofile.role == "renter" %}
-              <li>
-                  <a href="{% url 'myfavourites' %}" class="{% if request.path == 'favourites/' %}active{% endif %}">
-                    Favourites
-                  </a>
-              </li>
-              {% endif %}
-
               <li><a href="{% url 'contact' %}" class="{% if request.path == '/contact/' %}active{% endif %}">Contact
                   Us</a></li>
               <li>

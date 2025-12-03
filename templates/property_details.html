@@ -4,6 +4,9 @@
 {% block title %}{{ property.name }} Details{% endblock %}
 
 {% block content %}
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
 <style>
 .property-detail-img {
     max-height: 450px;
@@ -26,7 +29,7 @@
     display: flex;
     transition: transform 0.4s ease-in-out;
     width: 100%;
-    height: 100%%;
+    height: 100%;
 }
 
 /* Each individual image/video container */
@@ -77,6 +80,44 @@
 .section{
         margin-top: 80px;
     }
+
+
+    .fav-overlay {
+        position: absolute;
+        bottom: 10px;
+        right: 10px;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 5px;
+        z-index: 10;
+    }
+    .fav-overlay a {
+        font-size: 14px;
+        color: white;
+        /* Link text color */
+        margin-top: 20px;
+        margin-right:15px;
+        text-decoration: none;
+    }
+
+    .updatefav i {
+    cursor: pointer;
+    color: black; 
+    font-size: 25px; 
+    transition: color 0.3s ease;
+}
+
+.updatefav i.fa-heart-o {
+    color: black;  /*  black outline */
+}
+
+.fav-overlay {
+    position: absolute;
+    bottom: 10px;
+    right: 10px;
+    z-index: 10;
+}
+
 </style>
 
 <div class="container mt-3 mb-0">
@@ -101,11 +142,35 @@
                     <button class="slider-nav prev-btn" onclick="moveSlide(-1)">&#10094;</button>
                     <button class="slider-nav next-btn" onclick="moveSlide(1)">&#10095;</button>
                     {% endif %}
+                    {% if request.user.is_authenticated and request.user.userprofile.role == "renter" %}
+                            <div class="property_data">
+                                <input type="hidden" class="prop_id" value="{{ property.id }}">
+
+                                <div class="fav-overlay">
+                                    <a href="javascript:void(0);" class="updatefav" style="text-decoration: none;">
+                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
                 </div>
                 {% else %}
                     <img src="{% static 'images/placeholder.jpg' %}" class="card-img-top img-fluid property-detail-img"
                         alt="No Image Available">
+                    {% if request.user.is_authenticated and request.user.userprofile.role == "renter" %}
+                            <div class="property_data">
+                                <input type="hidden" class="prop_id" value="{{ property.id }}">
+
+                                <div class="fav-overlay">
+                                    <a href="javascript:void(0);" class="updatefav" style="text-decoration: none;">
+                                        <i class="fa fa-heart-o" aria-hidden="true"></i>
+                                    </a>
+                                </div>
+                            </div>
+                        {% endif %}
                 {% endif %}
+
+                
 
                 <div class="card-body">
                     <h1 class="card-title text-center mb-4">{{ property.name }}</h1>
@@ -192,6 +257,7 @@
 <div class="container mt-0" style=" ">
     <div class="row">
         <div class="section properties">    
+            {% if user.is_authenticated and not is_proprietor %}
             {% if similar_props%}
                 <h5 style="color: #ff5920; 
                            padding: 0 10px 10px; 
@@ -236,6 +302,7 @@
                     </div>
                 </div>
                 {% endfor %}
+            {% endif %}
             {% endif %}
             </div>
         </div>

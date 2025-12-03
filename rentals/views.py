@@ -61,6 +61,14 @@ from django.utils import timezone
 from datetime import timedelta
 
 
+from django.contrib.auth.forms import SetPasswordForm
+from django.core.mail import send_mail
+from django.contrib import messages
+from django.urls import reverse
+from .models import PasswordResetOTP # Import the model
+from django.contrib.auth.decorators import login_required # Used for session access
+
+
 def home(request):
     """
     View for the homepage (index.html).
@@ -607,6 +615,12 @@ def notifications(request):
 
     return render(request, 'notifications.html', context)
 
+from django.shortcuts import get_object_or_404, redirect, render
+from django.contrib import messages
+from django.contrib.auth.decorators import login_required
+from django.urls import reverse
+from django.http import JsonResponse
+
 @login_required
 def manage_request(request, request_id, action):
     req = get_object_or_404(Request, id=request_id)
@@ -614,37 +628,46 @@ def manage_request(request, request_id, action):
 
     # Ensure only the proprietor of this request can manage it
     if req.proprietor != user_profile:
+        if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            return JsonResponse({'success': False, 'message': 'Not authorized'})
         messages.error(request, "You are not authorized to manage this request.")
-        # Redirect to requests section as default
         return redirect(f"{reverse('proprietordashboard')}?section=requests")
 
     if request.method == 'POST':
-        # Accept or Reject logic
+        # Accept logic
         if action == 'accept' and req.status == 'pending':
             req.status = 'accepted'
             req.save()
-            messages.success(request, f"Request from {req.renter.user.username} for '{req.property.name}' accepted.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({
+                    'success': True,
+                    'chat_url': reverse('chat', args=[req.id])
+                })
+            messages.success(request, "Request accepted.")
+        # Reject logic
         elif action == 'reject' and req.status == 'pending':
             req.status = 'rejected'
             req.save()
-            messages.info(request, f"Request from {req.renter.user.username} for '{req.property.name}' rejected.")
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': True})
+            messages.info(request, "Request rejected.")
         else:
+            if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+                return JsonResponse({'success': False, 'message': 'Cannot process request'})
             messages.warning(request, "This request cannot be processed at its current status.")
 
-        # Use 'next' parameter to redirect dynamically
-        next_url = request.POST.get('next')  # e.g., ?section=requests or ?section=notifications
-        if next_url:
-            return redirect(f"{reverse('proprietordashboard')}{next_url}")
-        # Fallback to requests section
-        return redirect(f"{reverse('proprietordashboard')}?section=requests")
+        # Normal redirect for non-AJAX
+        next_url = request.POST.get('next')
+        if not request.headers.get('x-requested-with') == 'XMLHttpRequest':
+            if next_url:
+                return redirect(f"{reverse('proprietordashboard')}{next_url}")
+            return redirect(f"{reverse('proprietordashboard')}?section=requests")
 
-    # If the request is GET or invalid method, just redirect back to dashboard safely
+    # For GET or invalid method
+    if request.headers.get('x-requested-with') == 'XMLHttpRequest':
+        return JsonResponse({'success': False, 'message': 'Invalid request method'})
     messages.error(request, "Invalid request method.")
     return redirect(f"{reverse('proprietordashboard')}?section=requests")
-
-    """ referer = request.META.get('HTTP_REFERER')
-    return redirect(referer or 'requests') """
-
 
 @login_required
 def renter_details(request, request_id):
@@ -668,14 +691,15 @@ def renter_details(request, request_id):
 
     # If authorized, get the renter's UserProfile
     renter_profile = req.renter
+    is_proprietor_owner = (current_user_profile == req.proprietor)
 
     context = {
         'renter_profile': renter_profile,
         'request_obj': req, # Pass the request object for context (e.g., property name)
         'property_obj': req.property, # Explicitly pass the property for convenience in template
+        'is_proprietor_owner': is_proprietor_owner,  # NEW
     }
     return render(request, 'renter_details.html', context) # Use specific app template path
-
 #for chatbox
 def chat_view(request, request_id):
     req = get_object_or_404(Request, id=request_id)
@@ -751,7 +775,6 @@ def requests_view(request):
         'pending_requests': pending_requests,
         'accepted_requests': accepted_requests,
     })
-
 
 
 # --- 1. Knowledge Base (Static Answers) ---
@@ -865,12 +888,7 @@ from django.contrib.auth import get_user_model, update_session_auth_hash
 # Change this:
 # from django.contrib.auth.forms import PasswordChangeForm 
 
-from django.contrib.auth.forms import SetPasswordForm
-from django.core.mail import send_mail
-from django.contrib import messages
-from django.urls import reverse
-from .models import PasswordResetOTP # Import the model
-from django.contrib.auth.decorators import login_required # Used for session access
+
 
 # Get the custom or default User model
 User = get_user_model()#When you use the code User = get_user_model(), the resulting User variable represents the database table that stores all your user records.
@@ -878,8 +896,10 @@ User = get_user_model()#When you use the code User = get_user_model(), the resul
 # --- Step 1: Request Email/Username and Send OTP ---
 def password_reset_request(request):
     if request.method == 'POST':
-        if 'password_reset_user_id' in request.session:#clearingtheprevsessiondata
-            del request.session['password_reset_user_id']
+        session_keys = ['password_reset_user_id', 'otp_verified', '_auth_user_id']
+        for key in session_keys:
+            if key in request.session:
+                del request.session[key]
         email_or_username = request.POST.get('email_or_username', '').strip()
         #that removes leading and trailing whitespace (spaces, tabs, newlines).
         try:
@@ -919,12 +939,11 @@ def password_reset_request(request):
         # Use the session to temporarily store the user's ID for the verification step
         request.session['password_reset_user_id'] = user.id
         # so in this session we are storing a key value , so session lets to add a key value pair that can retrived during that session in different pages and cureenlt we are not logged in so to store we have to add a new key value pair to store the info otherwise during logged in state the middlewares handle this and store it in session ??
-        
+        request.session.modified = True 
         # 3. Redirect to the OTP verification page
         return redirect('password_reset_verify_otp')
 
     return render(request, 'password_reset_request.html')#is called ifthe request isnot post.
-
 def password_reset_otp_done(request):
     """Simple confirmation page after sending the OTP."""
     return render(request, 'password_reset_otp_done.html')
@@ -1024,3 +1043,5 @@ def password_reset_new_password(request):
         form = SetPasswordForm(user=user)
 
     return render(request, 'password_reset_new_password.html', {'form': form})##if. invalid. form. thenrenders. through. this.
+
+
