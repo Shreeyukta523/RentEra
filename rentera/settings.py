@@ -162,11 +162,11 @@ EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
 EMAIL_USE_TLS = True
-EMAIL_HOST_USER='unxaun@gmail.com'#USER GMAIL TO SEND MAIL
+EMAIL_HOST_USER='renteraasap@gmail.com'#USER GMAIL TO SEND MAIL
 EMAIL_HOST_PASSWORD= "jzpl nwvj gnle eboq"#GIVE THE APP PASSWORD
 DEFAULT_FROM_EMAIL = 'no-reply@yourdomain.com'
 
-ADMIN_EMAIL = 'unxaun@gmail.com'
+ADMIN_EMAIL = 'renteraasap@gmail.com'
 
 # For the Admin side (you may want different expiration or settings)
 SESSION_ENGINE = 'django.contrib.sessions.backends.db'
@@ -201,7 +201,7 @@ INSTALLED_APPS = [
 #paypal settings
 #set sandbox to true
 PAYPAL_TEST=True
-PAYPAL_RECEIVER_EMAIL="unxaun@gmail.com"    #business acc
+PAYPAL_RECEIVER_EMAIL="renteraasap@gmail.com"    #business acc
 PAYPAL_CLIENT_ID = 'AZLJNIQ6C5UHvhfOviGWLjgAoR9QYwW9QvElB3ZJBG8YUWPqbjQbqpvo1SiYvnoGqaNWkN7sWfo6zIin'
 PAYPAL_CLIENT_SECRET = 'ENhsSDu2l-_4iiFdjJoTvVtjvBZrjinysIfoXh3yvslsjsgR610Z1BJk4oUuJLvROCL5MDV4YnZ7kC7h'
 
