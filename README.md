@@ -217,6 +217,5 @@ This project is developed for educational and research purposes and may be exten
 
 ## 👨‍💻 Developed By  
 **Anisha kumpakha,Binu Prajapati,Krishala Shrestha,Shreeyukta Lohani**
-**RentEra Team**
 
 AI-Powered • Secure • Smart Rental Management Platform
